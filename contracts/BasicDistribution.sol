@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.20;
 
-import {Distribution} from "gif-next/components/Distribution.sol"; 
-import {Fee} from "gif-next/types/Fee.sol";
-import {NftId} from "gif-next/types/NftId.sol";
-import {ReferralId} from "gif-next/types/Referral.sol";
-import {Timestamp} from "gif-next/types/Timestamp.sol";
-import {UFixed} from "gif-next/types/UFixed.sol";
+import {Distribution} from "gif-next/contracts/components/Distribution.sol"; 
+import {Fee} from "gif-next/contracts/types/Fee.sol";
+import {NftId} from "gif-next/contracts/types/NftId.sol";
+import {ReferralId} from "gif-next/contracts/types/Referral.sol";
+import {Timestamp} from "gif-next/contracts/types/Timestamp.sol";
+import {UFixed} from "gif-next/contracts/types/UFixed.sol";
 
 contract BasicDistribution is Distribution {
     

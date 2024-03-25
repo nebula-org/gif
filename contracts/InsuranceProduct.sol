@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.20;
 
-import {Product} from "gif-next/components/Product.sol";
-import {RiskId} from "gif-next/types/RiskId.sol";
-import {StateId} from "gif-next/types/StateId.sol";
-import {Fee} from "gif-next/types/Fee.sol";
-import {NftId} from "gif-next/types/NftId.sol";
-import {ReferralId} from "gif-next/types/Referral.sol";
-import {Timestamp, Seconds} from "gif-next/types/Timestamp.sol";
+import {Product} from "gif-next/contracts/components/Product.sol";
+import {RiskId} from "gif-next/contracts/types/RiskId.sol";
+import {StateId} from "gif-next/contracts/types/StateId.sol";
+import {Fee} from "gif-next/contracts/types/Fee.sol";
+import {NftId} from "gif-next/contracts/types/NftId.sol";
+import {ReferralId} from "gif-next/contracts/types/Referral.sol";
+import {Timestamp, Seconds} from "gif-next/contracts/types/Timestamp.sol";
 
 uint64 constant SPECIAL_ROLE_INT = 11111;
 

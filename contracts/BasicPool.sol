@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.20;
 
-import {AmountLib} from "gif-next/types/Amount.sol";
-import {Fee} from "gif-next/types/Fee.sol";
-import {NftId} from "gif-next/types/NftId.sol";
-import {Pool} from "gif-next/components/Pool.sol";
-import {Seconds} from "gif-next/types/Timestamp.sol";
-import {UFixed} from "gif-next/types/UFixed.sol";
+import {AmountLib} from "gif-next/contracts/types/Amount.sol";
+import {Fee} from "gif-next/contracts/types/Fee.sol";
+import {NftId} from "gif-next/contracts/types/NftId.sol";
+import {Pool} from "gif-next/contracts/components/Pool.sol";
+import {Seconds} from "gif-next/contracts/types/Timestamp.sol";
+import {UFixed} from "gif-next/contracts/types/UFixed.sol";
 
 contract BasicPool is Pool {
     
