@@ -4,7 +4,11 @@
   "description": "A sandbox project for the next version of the GIF smart contracts",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "hh compile",
+    "test": "hh test",
+    "ptest": "hh test --parallel",
+    "test-with-gas": "REPORT_GAS=true hh test",
+    "coverage": "hh coverage"
   },
   "repository": {
     "type": "git",
