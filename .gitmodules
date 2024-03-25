@@ -3,4 +3,4 @@
 	url = https://github.com/foundry-rs/forge-std
 [submodule "lib/gif-next"]
 	path = lib/gif-next
-	url = https://github.com/@etherisc/gif-next
+	url = https://github.com/etherisc/gif-next
