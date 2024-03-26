@@ -1,6 +1,6 @@
 import { AddressLike, Signer, resolveAddress } from "ethers";
-import { DistributionService__factory, PoolService__factory, Registry__factory, TokenRegistry__factory } from "../lib/gif-next/typechain-types";
-import { Distribution, IInstance__factory, InstanceAccessManager__factory, Pool, Pool } from "../typechain-types";
+import { DistributionService__factory, PoolService__factory, ProductService__factory, Registry__factory, TokenRegistry__factory } from "../lib/gif-next/typechain-types";
+import { Distribution, IInstance__factory, InstanceAccessManager__factory, Pool, Pool, Product } from "../typechain-types";
 import { getNamedAccounts } from "./libs/accounts";
 import { deployContract } from "./libs/deployment";
 import { executeTx, getFieldFromTxRcptLogs } from "./libs/transaction";
@@ -12,6 +12,7 @@ async function main() {
 
     const DISTRIBUTION_OWNER_ROLE = 2;
     const POOL_OWNER_ROLE = 4;
+    const PRODUCT_OWNER_ROLE = 5;
 
     const amountLibAddress = process.env.AMOUNTLIB_ADDRESS;
     const feeLibAddress = process.env.FEELIB_ADDRESS;
@@ -29,14 +30,17 @@ async function main() {
     const instanceAccessManagerAddress = await instance.getInstanceAccessManager();
     const instanceAccessManager = InstanceAccessManager__factory.connect(instanceAccessManagerAddress, instanceOwner);
     await executeTx(() => instanceAccessManager.grantRole(DISTRIBUTION_OWNER_ROLE, distributionOwner));
-    await executeTx(() => instanceAccessManager.grantRole(POOL_OWNER_ROLE, poolOwner));
     console.log(`Distribution owner role granted to ${distributionOwner} at ${instanceAccessManagerAddress}`);
-
+    await executeTx(() => instanceAccessManager.grantRole(POOL_OWNER_ROLE, poolOwner));
+    console.log(`Pool owner role granted to ${poolOwner} at ${instanceAccessManagerAddress}`);
+    await executeTx(() => instanceAccessManager.grantRole(PRODUCT_OWNER_ROLE, productOwner));
+    console.log(`Product owner role granted to ${productOwner} at ${instanceAccessManagerAddress}`);
+    
     const { address: usdcMockAddress } = await deployContract(
         "UsdcMock",
         protocolOwner);
 
-    await deployAndRegisterDistribution(
+    const { distributionAddress } = await deployAndRegisterDistribution(
         distributionOwner,
         instanceNftId!,
         usdcMockAddress,
@@ -44,16 +48,29 @@ async function main() {
         nftIdLibAddress!,
         referralLibAddress!
     );
-    await deployAndRegisterPool(
+    const { poolAddress } = await deployAndRegisterPool(
         poolOwner,
         instanceNftId!,
         usdcMockAddress,
         registryAddress!,
         nftIdLibAddress!,
-        amountLibAddress,
-        feeLibAddress,
-        roleIdLibAddress,
-        ufixedLibAddress,
+        amountLibAddress!,
+        feeLibAddress!,
+        roleIdLibAddress!,
+        ufixedLibAddress!,
+    );
+    await deployAndRegisterProduct(
+        productOwner,
+        instanceNftId!,
+        usdcMockAddress,
+        registryAddress!,
+        poolAddress,
+        distributionAddress,
+        nftIdLibAddress!,
+        amountLibAddress!,
+        feeLibAddress!,
+        roleIdLibAddress!,
+        ufixedLibAddress!,
     );
     
     // workaround to get script to stop
@@ -119,10 +136,6 @@ async function deployAndRegisterPool(
     ufixedLibAddress: AddressLike,
 ): Promise<{ pool: Pool, poolNftId: string, poolAddress: AddressLike }> {
     const poolName = "BasicPool-" + Math.random().toString(16).substring(7);
-    const fee = {
-        fractionalFee: 0,
-        fixedFee: 0,
-    };
     const { address: poolAddress, contract: pool } = await deployContract(
         "BasicPool",
         poolOwner,
@@ -156,6 +169,60 @@ async function deployAndRegisterPool(
         pool: pool as Pool,
         poolNftId: poolNftId as string,
         poolAddress,
+    };
+}
+
+async function deployAndRegisterProduct(
+    productOwner: Signer,
+    instanceNftId: string, 
+    usdcMockAddress: AddressLike,
+    registryAddress: AddressLike, 
+    poolAddress: AddressLike,
+    distributionAddress: AddressLike,
+    nftIdLibAddress: AddressLike, 
+    amountLibAddress: AddressLike,
+    feeLibAddress: AddressLike,
+    roleIdLibAddress: AddressLike,
+    ufixedLibAddress: AddressLike,
+): Promise<{ product: Product, productNftId: string, productAddress: AddressLike }> {
+    const productName = "InsuranceProduct-" + Math.random().toString(16).substring(7);
+    const fee = {
+        fractionalFee: 0,
+        fixedFee: 0,
+    };
+    const { address: productAddress, contract: product } = await deployContract(
+        "InsuranceProduct",
+        productOwner,
+        [
+            productName,
+            registryAddress,
+            instanceNftId,
+            usdcMockAddress,
+            false,
+            poolAddress,
+            distributionAddress,
+            fee,
+            fee,
+            productOwner
+        ],
+        {
+            libraries: {
+                NftIdLib: nftIdLibAddress,
+            }
+        });
+
+    const registry = Registry__factory.connect(await resolveAddress(registryAddress), productOwner);
+    const productServiceAddress = await registry.getServiceAddress(110, 3);
+    const productService = ProductService__factory.connect(productServiceAddress, productOwner);
+
+    console.log(`Registering product at ${productAddress} ...`);
+    const rcpt = await executeTx(() => productService.register(productAddress));
+    const productNftId = getFieldFromTxRcptLogs(rcpt!, registry.interface, "LogRegistration", "nftId");
+    console.log(`Product ${productName} registered at ${productAddress} with ${productNftId}`);
+    return {
+        product: product as Product,
+        productNftId: productNftId as string,
+        productAddress,
     };
 }
 
