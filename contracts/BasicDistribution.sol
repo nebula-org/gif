@@ -11,6 +11,7 @@ import {UFixed} from "gif-next/contracts/types/UFixed.sol";
 contract BasicDistribution is Distribution {
     
     constructor(
+        string memory name,
         address registry,
         NftId instanceNftId,
         address token,
@@ -22,7 +23,7 @@ contract BasicDistribution is Distribution {
         initialize(
             registry,
             instanceNftId,
-            "BasicDistribution",
+            name,
             token,
             minDistributionOwnerFee,
             distributionFee,

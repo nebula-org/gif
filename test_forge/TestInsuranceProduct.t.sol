@@ -114,6 +114,7 @@ contract TestInsuranceProduct is TestGifBase {
 
         vm.startPrank(distributionOwner);
         distribution = new BasicDistribution(
+            "BasicDistribution",
             address(registry),
             instanceNftId,
             address(token),

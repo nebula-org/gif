@@ -14,3 +14,7 @@ node_modules
 # solidity-coverage files
 /coverage
 /coverage.json
+
+# custom
+deployment_state_*.json
+deploy.log

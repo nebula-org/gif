@@ -3,6 +3,10 @@ import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-foundry";
 // import "@nomicfoundation/hardhat-verify";
 
+// load .env file 
+import { config as dotEnvConfig } from "dotenv";
+dotEnvConfig();
+
 const config: HardhatUserConfig = {
   solidity: {
     version: "0.8.20",
@@ -19,7 +23,7 @@ const config: HardhatUserConfig = {
     },
     anvil: {
       chainId: 1337,
-      url: "http://anvil:7545",
+      url: "http://172.18.0.2:7545",
       accounts: {
         mnemonic: "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat",
         count: 20,
