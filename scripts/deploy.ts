@@ -1,18 +1,15 @@
 import { AddressLike, Signer, resolveAddress } from "ethers";
 import { DistributionService__factory, PoolService__factory, ProductService__factory, Registry__factory, TokenRegistry__factory } from "../lib/gif-next/typechain-types";
-import { Distribution, IInstance__factory, InstanceAccessManager__factory, Pool, Pool, Product } from "../typechain-types";
+import { Distribution, IInstance__factory, InstanceAccessManager__factory, Pool, Product } from "../typechain-types";
 import { getNamedAccounts } from "./libs/accounts";
 import { deployContract } from "./libs/deployment";
 import { executeTx, getFieldFromTxRcptLogs } from "./libs/transaction";
 import { logger } from "./logger";
+import { DISTRIBUTION_OWNER_ROLE, OBJECT_TYPE_DISTRIBUTION, OBJECT_TYPE_POOL, OBJECT_TYPE_PRODUCT, POOL_OWNER_ROLE, PRODUCT_OWNER_ROLE } from "./libs/gif_constants";
 
 async function main() {
     logger.info("deploying components ...");
     const { protocolOwner, instanceOwner, distributionOwner, poolOwner, productOwner } = await getNamedAccounts();
-
-    const DISTRIBUTION_OWNER_ROLE = 2;
-    const POOL_OWNER_ROLE = 4;
-    const PRODUCT_OWNER_ROLE = 5;
 
     const amountLibAddress = process.env.AMOUNTLIB_ADDRESS;
     const feeLibAddress = process.env.FEELIB_ADDRESS;
@@ -21,13 +18,12 @@ async function main() {
     const roleIdLibAddress = process.env.ROLEIDLIB_ADDRESS;
     const ufixedLibAddress = process.env.UFIXEDLIB_ADDRESS;
     
-    const registryAddress = process.env.REGISTRY_ADDRESS;
     const instanceNftId = process.env.INSTANCE_NFTID;
     const instanceAddress = process.env.INSTANCE_ADDRESS;
-    // const tokenRegistryAddress = process.env.TOKEN_REGISTRY_ADDRESS;
     
     const instance = IInstance__factory.connect(instanceAddress!, instanceOwner);
     const instanceAccessManagerAddress = await instance.getInstanceAccessManager();
+    const registryAddress = await instance.getRegistry();
     const instanceAccessManager = InstanceAccessManager__factory.connect(instanceAccessManagerAddress, instanceOwner);
     await executeTx(() => instanceAccessManager.grantRole(DISTRIBUTION_OWNER_ROLE, distributionOwner));
     console.log(`Distribution owner role granted to ${distributionOwner} at ${instanceAccessManagerAddress}`);
@@ -67,10 +63,6 @@ async function main() {
         poolAddress,
         distributionAddress,
         nftIdLibAddress!,
-        amountLibAddress!,
-        feeLibAddress!,
-        roleIdLibAddress!,
-        ufixedLibAddress!,
     );
     
     // workaround to get script to stop
@@ -110,7 +102,7 @@ async function deployAndRegisterDistribution(
         });
 
     const registry = Registry__factory.connect(await resolveAddress(registryAddress), distributionOwner);
-    const distributuonServiceAddress = await registry.getServiceAddress(120, 3);
+    const distributuonServiceAddress = await registry.getServiceAddress(OBJECT_TYPE_DISTRIBUTION, 3);
     const distributionService = DistributionService__factory.connect(distributuonServiceAddress, distributionOwner);
 
     console.log(`Registering distribution at ${distAddress} ...`);
@@ -158,7 +150,7 @@ async function deployAndRegisterPool(
         });
 
     const registry = Registry__factory.connect(await resolveAddress(registryAddress), poolOwner);
-    const poolServiceAddress = await registry.getServiceAddress(140, 3);
+    const poolServiceAddress = await registry.getServiceAddress(OBJECT_TYPE_POOL, 3);
     const poolService = PoolService__factory.connect(poolServiceAddress, poolOwner);
 
     console.log(`Registering pool at ${poolAddress} ...`);
@@ -180,10 +172,6 @@ async function deployAndRegisterProduct(
     poolAddress: AddressLike,
     distributionAddress: AddressLike,
     nftIdLibAddress: AddressLike, 
-    amountLibAddress: AddressLike,
-    feeLibAddress: AddressLike,
-    roleIdLibAddress: AddressLike,
-    ufixedLibAddress: AddressLike,
 ): Promise<{ product: Product, productNftId: string, productAddress: AddressLike }> {
     const productName = "InsuranceProduct-" + Math.random().toString(16).substring(7);
     const fee = {
@@ -212,7 +200,7 @@ async function deployAndRegisterProduct(
         });
 
     const registry = Registry__factory.connect(await resolveAddress(registryAddress), productOwner);
-    const productServiceAddress = await registry.getServiceAddress(110, 3);
+    const productServiceAddress = await registry.getServiceAddress(OBJECT_TYPE_PRODUCT, 3);
     const productService = ProductService__factory.connect(productServiceAddress, productOwner);
 
     console.log(`Registering product at ${productAddress} ...`);
