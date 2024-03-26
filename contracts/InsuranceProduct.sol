@@ -14,6 +14,7 @@ uint64 constant SPECIAL_ROLE_INT = 11111;
 contract InsuranceProduct is Product {
 
     constructor(
+        string memory name,
         address registry,
         NftId instanceNftid,
         address token,
@@ -28,7 +29,7 @@ contract InsuranceProduct is Product {
         initialize(
             registry,
             instanceNftid,
-            "InsuranceProduct",
+            name,
             token,
             isInterceptor,
             pool,

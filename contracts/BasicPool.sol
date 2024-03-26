@@ -11,36 +11,30 @@ import {UFixed} from "gif-next/contracts/types/UFixed.sol";
 contract BasicPool is Pool {
     
     constructor(
+        string memory name,
         address registry,
         NftId instanceNftId,
         address token,
         bool isInterceptor,
-        bool isConfirmingApplication,
-        UFixed collateralizationLevel,
-        UFixed retentionLevel,
         address initialOwner
     ) 
     {
         initialize(
+            name,
             registry,
             instanceNftId,
             token,
             isInterceptor,
-            isConfirmingApplication,
-            collateralizationLevel,
-            retentionLevel,
             initialOwner
         );
     }
 
     function initialize(
+        string memory name,
         address registry,
         NftId instanceNftId,
         address token,
         bool isInterceptor,
-        bool isConfirmingApplication,
-        UFixed collateralizationLevel,
-        UFixed retentionLevel,
         address initialOwner
     )
         public
@@ -50,14 +44,9 @@ contract BasicPool is Pool {
         initializePool(
             registry,
             instanceNftId,
-            "BasicPool",
+            name,
             token,
             isInterceptor,
-            // TODO refactor
-            // false, // externally managed
-            // isConfirmingApplication, // verifying applications
-            // collateralizationLevel,
-            // retentionLevel,
             initialOwner,
             "");
     }

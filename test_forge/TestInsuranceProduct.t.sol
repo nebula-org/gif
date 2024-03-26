@@ -127,13 +127,11 @@ contract TestInsuranceProduct is TestGifBase {
 
         vm.startPrank(poolOwner);
         pool = new BasicPool(
+            "BasicPool",
             address(registry),
             instanceNftId,
             address(token),
             false,
-            false,
-            UFixedLib.toUFixed(1),
-            UFixedLib.toUFixed(1),
             poolOwner
         );
         poolNftId = poolService.register(address(pool));
@@ -141,6 +139,7 @@ contract TestInsuranceProduct is TestGifBase {
 
         vm.startPrank(productOwner);
         product = new InsuranceProduct(
+            "InsuranceProduct",
             address(registry),
             instanceNftId,
             address(token),
