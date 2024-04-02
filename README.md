@@ -37,6 +37,7 @@ npm run scripts/deploy.ts
 ```
 
 As a prerequisite, the GIF framework is required to be deployed on the chain and a (new) instance created (see [this script](https://github.com/etherisc/gif-next/blob/develop/scripts/deploy_all.ts) for deployment of the GIF). 
+Make sure the version deployed and the version linked in this project (via Git submodules) are compatible.
 Also these environment variables must be set (e.g. in a `.env` file):
 
 - `AMOUNTLIB_ADDRESS` is the address of the AmountLib contract
