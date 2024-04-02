@@ -52,3 +52,7 @@ The values can be takes from the output of the deployment of the GIF framework.
 
 To deploy to a different chain, configure it in `hardhat.config.ts` and run the deployment script with the `--network` flag. 
 
+## Documentation
+
+Find the documentation of the next GIF version at https://docs.etherisc.com/gif-next/3.x/ 
+
