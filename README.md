@@ -56,3 +56,41 @@ To deploy to a different chain, configure it in `hardhat.config.ts` and run the 
 
 Find the documentation of the next GIF version at https://docs.etherisc.com/gif-next/3.x/ 
 
+
+## Setup of the development environment
+
+### Prerequisites
+
+- A running Docker instance (or other compatible container engine) 
+- Visual Studio Code (VS Code) with the [Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) installed
+- Know how to work with [devcontainers](https://code.visualstudio.com/docs/devcontainers/containers)  (optional) 
+
+Installing Docker on Windows is sometimes a struggle.
+Recommended Approach: Follow the installation instructions for https://docs.docker.com/desktop/install/windows-install/[Docker Desktop].
+Installing Docker on [Linux](https://docs.docker.com/desktop/install/linux-install/) or [Mac](https://docs.docker.com/desktop/install/mac-install/) should be straight forward.
+
+### Get the source code and editor ready
+
+- Fork the https://github.com/etherisc/gif-next-sandbox to your own github account (if you want to be able to commit changes)
+- Clone the repository to your local machine
+- Open the repository in VS Code
+
+There are three ways to work with the sandbox (described below)
+
+- Use the devcontainer provided in the repository
+- Use Github Codespaces
+
+### Start the sandbox devcontainer
+
+- Start the devcontainer (either wait for the pop to build the devcontainer or open the command list (F1) and select the command _Dev Containers: Rebuild and reopen in container_) 
+- Wait for the devcontainer to finish compiling and deploying the contracts
+
+### Use Github Codespaces
+
+Github Codespaces is a new feature of Github that allows you to work with a repository in a container environment hosted by Github.
+To use Github Codespaces you need to have a Github account and you need to be logged in to Github.
+Open the https://github.com/etherisc/gif-next-sandbox repository in your browser and click on the button `Code` and select `Open with Codespaces` from the dropdown menu. 
+This will open a new browser tab with the sandbox repository in a devcontainer hosted by Github.
+You can now work with the sandbox repository in the browser (or open the codespace in VS Code by clicking on the button `Open with VS Code` in the upper right corner of the browser tab).
+
+To improve performance of the codespace you can change the machine type in the codespace settings.

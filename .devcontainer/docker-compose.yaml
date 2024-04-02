@@ -1,14 +1,14 @@
 version: '3'
 
 services:
-  anvil:
-    build:
-      context: ..
-      dockerfile: .devcontainer/Dockerfile.anvil
-    volumes:
-      - anvil-state:/anvil
-    # ports:
-    #   - "7545:7545"
+  # anvil:
+  #   build:
+  #     context: ..
+  #     dockerfile: .devcontainer/Dockerfile.anvil
+  #   volumes:
+  #     - anvil-state:/anvil
+  #   ports:
+  #     - "7545:7545"
   contracts:
     # See https://aka.ms/vscode-remote/containers/non-root for details.
     user: node
@@ -26,4 +26,4 @@ services:
 
 volumes:
   #node_modules:
-  anvil-state:
+  #anvil-state:
