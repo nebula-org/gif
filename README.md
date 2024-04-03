@@ -6,6 +6,12 @@ None if them do more then expose the internal funtions right now, but they can b
 
 The project also contains an example foundry forge based unit test `TestInsuranceProduct.t.sol` which demonstrates how to write a test for the `InsuranceProduct` contract.
 
+## Notes
+
+- Renaming the contracts requires adapting the deployment script to be able to deploy the renamed contracts. The same goes for including additional libraries in the component contracts.
+- Updating the GIF framework requires updating the submodule in the `gif-next` directory. Since `forge update gif-next` will always update to the latest commit on the develop branch of the `gif-next` repo. If a specific version if required, its easier to first remove the module using `forge remove gif=next` and then re-add it again using `forge install gif-next@version`. 
+- Updating the GIF framework might require changes to components as well as the deployment script. 
+
 ## Commands
 
 ### Compiling
