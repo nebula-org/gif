@@ -3,23 +3,23 @@ pragma solidity 0.8.20;
 
 import {console} from "forge-std/src/Test.sol";
 
-import {APPLIED, ACTIVE, UNDERWRITTEN, CLOSED} from "gif-next/contracts/types/StateId.sol";
-import {Fee, FeeLib} from "gif-next/contracts/types/Fee.sol";
+import {APPLIED, ACTIVE, UNDERWRITTEN, CLOSED} from "gif-next/contracts/type/StateId.sol";
+import {Fee, FeeLib} from "gif-next/contracts/type/Fee.sol";
 import {IBundle} from "gif-next/contracts/instance/module/IBundle.sol";
 import {IComponents} from "gif-next/contracts/instance/module/IComponents.sol";
 import {ILifecycle} from "gif-next/contracts/instance/base/ILifecycle.sol";
 import {IPolicy} from "gif-next/contracts/instance/module/IPolicy.sol";
 import {IRisk} from "gif-next/contracts/instance/module/IRisk.sol";
 import {ISetup} from "gif-next/contracts/instance/module/ISetup.sol";
-import {NftId, NftIdLib} from "gif-next/contracts/types/NftId.sol";
-import {POLICY} from "gif-next/contracts/types/ObjectType.sol";
-import {PRODUCT_OWNER_ROLE, DISTRIBUTION_OWNER_ROLE, POOL_OWNER_ROLE} from "gif-next/contracts/types/RoleId.sol";
-import {ReferralLib} from "gif-next/contracts/types/Referral.sol";
-import {RiskId, RiskIdLib, eqRiskId} from "gif-next/contracts/types/RiskId.sol";
-import {Seconds, SecondsLib} from "gif-next/contracts/types/Seconds.sol";
+import {NftId, NftIdLib} from "gif-next/contracts/type/NftId.sol";
+import {POLICY} from "gif-next/contracts/type/ObjectType.sol";
+import {PRODUCT_OWNER_ROLE, DISTRIBUTION_OWNER_ROLE, POOL_OWNER_ROLE} from "gif-next/contracts/type/RoleId.sol";
+import {ReferralLib} from "gif-next/contracts/type/Referral.sol";
+import {RiskId, RiskIdLib, eqRiskId} from "gif-next/contracts/type/RiskId.sol";
+import {Seconds, SecondsLib} from "gif-next/contracts/type/Seconds.sol";
 import {TestGifBase} from "gif-next/test_forge/base/TestGifBase.sol";
-import {Timestamp, TimestampLib, zeroTimestamp} from "gif-next/contracts/types/Timestamp.sol";
-import {UFixedLib} from "gif-next/contracts/types/UFixed.sol";
+import {Timestamp, TimestampLib, zeroTimestamp} from "gif-next/contracts/type/Timestamp.sol";
+import {UFixedLib} from "gif-next/contracts/type/UFixed.sol";
 
 import {BasicDistribution} from "../contracts/BasicDistribution.sol";
 import {BasicPool} from "../contracts/BasicPool.sol";
