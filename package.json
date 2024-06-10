@@ -22,20 +22,20 @@
   "homepage": "https://github.com/etherisc/gif-next-sandbox#readme",
   "devDependencies": {
     "@etherisc/gif-next": "0.0.2-e0ff180-567",
-    "@nomicfoundation/hardhat-foundry": "^1.1.1",
+    "@nomicfoundation/hardhat-foundry": "^1.1.2",
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "@typescript-eslint/eslint-plugin": "^7.1.0",
+    "@typescript-eslint/eslint-plugin": "^7.12.0",
     "@typescript-eslint/parser": "^7.1.0",
     "dotenv": "^16.3.1",
     "eslint": "^8.50.0",
     "hardhat": "^2.22.2",
-    "prettier": "^3.0.3",
+    "prettier": "^3.3.1",
     "prettier-plugin-solidity": "^1.1.3",
     "typescript": "^5"
   },
   "dependencies": {
     "abi-coder": "^5.0.0",
-    "ethers": "^6.7.1",
+    "ethers": "^6.13.0",
     "winston": "^3.10.0"
   }
 }
