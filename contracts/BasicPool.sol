@@ -13,10 +13,10 @@ contract BasicPool is Pool {
     constructor(
         address registry,
         NftId instanceNftId,
+        address initialOwner,
         string memory name,
         address token,
         bool isInterceptor,
-        address initialOwner,
         bytes memory registryData, 
         bytes memory componentData
     ) 

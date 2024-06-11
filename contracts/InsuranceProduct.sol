@@ -128,19 +128,19 @@ contract InsuranceProduct is Product {
         _collateralize(policyNftId, requirePremiumPayment, activateAt);
     }
 
-    function collectPremium(
-        NftId policyNftId,
-        Timestamp activateAt
-    ) public {
-        _collectPremium(policyNftId, activateAt);
-    }
+    // function collectPremium(
+    //     NftId policyNftId,
+    //     Timestamp activateAt
+    // ) public {
+    //     _collectPremium(policyNftId, activateAt);
+    // }
 
-    function activate(
-        NftId policyNftId,
-        Timestamp activateAt
-    ) public {
-        _activate(policyNftId, activateAt);
-    }
+    // function activate(
+    //     NftId policyNftId,
+    //     Timestamp activateAt
+    // ) public {
+    //     _activate(policyNftId, activateAt);
+    // }
 
     function close(
         NftId policyNftId
@@ -148,20 +148,20 @@ contract InsuranceProduct is Product {
         _close(policyNftId);
     }
 
-    function doSomethingSpecial() 
-        public 
-        restricted()
-        returns (bool) 
-    {
-        return true;
-    }
+    // function doSomethingSpecial() 
+    //     public 
+    //     restricted()
+    //     returns (bool) 
+    // {
+    //     return true;
+    // }
 
-    function doWhenNotLocked() 
-        public 
-        restricted()
-        returns (bool) 
-    {
-        return true;
-    }
+    // function doWhenNotLocked() 
+    //     public 
+    //     restricted()
+    //     returns (bool) 
+    // {
+    //     return true;
+    // }
 
 }

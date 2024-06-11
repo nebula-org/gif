@@ -141,10 +141,10 @@ async function deployAndRegisterPool(
         [
             registryAddress,
             instanceNftId,
+            poolOwner,
             poolName,
             usdcMockAddress,
             false,
-            poolOwner,
             encodeBytes32String(""),
             encodeBytes32String(""),
         ],

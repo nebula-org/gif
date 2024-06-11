@@ -141,10 +141,10 @@ contract TestInsuranceProduct is GifTest {
         testPool = new BasicPool(
             address(registry),
             instanceNftId,
+            poolOwner,
             "BasicPool",
             address(token),
             false,
-            poolOwner,
             "",
             ""
         );
