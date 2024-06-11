@@ -110,7 +110,8 @@ async function deployAndRegisterDistribution(
         const rcpt = await executeTx(() => distribution.register());
     } catch (error) {
         const failure = distribution.interface.parseError(error.data);
-        console.error(failure?.name);
+        logger.error(failure?.name);
+        logger.error(failure?.args);
         throw error;
     }
     const distNftId = await distribution.getNftId();
