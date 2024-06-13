@@ -1,24 +1,18 @@
 // SPDX-License-Identifier: APACHE-2.0
 pragma solidity 0.8.20;
 
-import {console} from "forge-std/src/Test.sol";
-
 import {AmountLib} from "gif-next/contracts/type/Amount.sol";
-import {APPLIED, ACTIVE, CLOSED} from "gif-next/contracts/type/StateId.sol";
+import {APPLIED, ACTIVE} from "gif-next/contracts/type/StateId.sol";
 import {Fee, FeeLib} from "gif-next/contracts/type/Fee.sol";
-import {IBundle} from "gif-next/contracts/instance/module/IBundle.sol";
 import {IComponents} from "gif-next/contracts/instance/module/IComponents.sol";
-import {ILifecycle} from "gif-next/contracts/shared/ILifecycle.sol";
 import {IPolicy} from "gif-next/contracts/instance/module/IPolicy.sol";
-import {IRisk} from "gif-next/contracts/instance/module/IRisk.sol";
 import {NftId, NftIdLib} from "gif-next/contracts/type/NftId.sol";
-import {POLICY} from "gif-next/contracts/type/ObjectType.sol";
 import {PRODUCT_OWNER_ROLE, DISTRIBUTION_OWNER_ROLE, POOL_OWNER_ROLE} from "gif-next/contracts/type/RoleId.sol";
 import {ReferralLib} from "gif-next/contracts/type/Referral.sol";
-import {RiskId, RiskIdLib, eqRiskId} from "gif-next/contracts/type/RiskId.sol";
+import {RiskId, RiskIdLib} from "gif-next/contracts/type/RiskId.sol";
 import {Seconds, SecondsLib} from "gif-next/contracts/type/Seconds.sol";
 import {GifTest} from "gif-next/test/base/GifTest.sol";
-import {Timestamp, TimestampLib, zeroTimestamp} from "gif-next/contracts/type/Timestamp.sol";
+import {TimestampLib} from "gif-next/contracts/type/Timestamp.sol";
 import {UFixedLib} from "gif-next/contracts/type/UFixed.sol";
 
 import {BasicDistribution} from "../contracts/BasicDistribution.sol";
@@ -194,6 +188,7 @@ contract TestInsuranceProduct is GifTest {
 
         Fee memory bundleFee = FeeLib.toFee(UFixedLib.zero(), 10);
         bundleNftId = testPool.createBundle(
+            investor,
             bundleFee, 
             10000, 
             SecondsLib.toSeconds(604800), 

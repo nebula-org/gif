@@ -59,6 +59,7 @@ contract BasicPool is Pool {
     }
 
     function createBundle(
+        address owner,
         Fee memory fee,
         uint256 initialAmount,
         Seconds lifetime,
@@ -68,7 +69,6 @@ contract BasicPool is Pool {
         virtual 
         returns(NftId bundleNftId)
     {
-        address owner = msg.sender;
         bundleNftId = _createBundle(
             owner,
             fee,
