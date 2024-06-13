@@ -1,43 +1,43 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.20;
 
-import {Distribution} from "gif-next/contracts/components/Distribution.sol"; 
-import {Fee} from "gif-next/contracts/types/Fee.sol";
-import {NftId} from "gif-next/contracts/types/NftId.sol";
-import {ReferralId} from "gif-next/contracts/types/Referral.sol";
-import {Timestamp} from "gif-next/contracts/types/Timestamp.sol";
-import {UFixed} from "gif-next/contracts/types/UFixed.sol";
+import {Distribution} from "gif-next/contracts/distribution/Distribution.sol"; 
+import {Fee} from "gif-next/contracts/type/Fee.sol";
+import {NftId} from "gif-next/contracts/type/NftId.sol";
+import {ReferralId} from "gif-next/contracts/type/Referral.sol";
+import {Timestamp} from "gif-next/contracts/type/Timestamp.sol";
+import {UFixed} from "gif-next/contracts/type/UFixed.sol";
 
 contract BasicDistribution is Distribution {
     
     constructor(
-        string memory name,
         address registry,
         NftId instanceNftId,
+        address initialOwner,
+        string memory name,
         address token,
-        Fee memory minDistributionOwnerFee,
-        Fee memory distributionFee,
-        address initialOwner
+        bytes memory registryData, 
+        bytes memory componentData
     ) 
     {
         initialize(
             registry,
             instanceNftId,
+            initialOwner,
             name,
             token,
-            minDistributionOwnerFee,
-            distributionFee,
-            initialOwner);
+            registryData,
+            componentData);
     }
 
     function initialize(
         address registry,
         NftId instanceNftId,
+        address initialOwner,
         string memory name,
         address token,
-        Fee memory minDistributionOwnerFee,
-        Fee memory distributionFee,
-        address initialOwner
+        bytes memory registryData, 
+        bytes memory componentData
     )
         public
         virtual
@@ -46,13 +46,11 @@ contract BasicDistribution is Distribution {
         initializeDistribution(
             registry,
             instanceNftId,
+            initialOwner,
             name,
             token,
-            minDistributionOwnerFee,
-            distributionFee,
-            initialOwner,
-            ""
-        );
+            registryData,
+            componentData);
     }
 
     /**

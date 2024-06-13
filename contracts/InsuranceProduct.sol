@@ -1,56 +1,56 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.20;
 
-import {Product} from "gif-next/contracts/components/Product.sol";
-import {RiskId} from "gif-next/contracts/types/RiskId.sol";
-import {StateId} from "gif-next/contracts/types/StateId.sol";
-import {Fee} from "gif-next/contracts/types/Fee.sol";
-import {NftId} from "gif-next/contracts/types/NftId.sol";
-import {ReferralId} from "gif-next/contracts/types/Referral.sol";
-import {Timestamp, Seconds} from "gif-next/contracts/types/Timestamp.sol";
+import {Amount, AmountLib} from "gif-next/contracts/type/Amount.sol";
+import {Product} from "gif-next/contracts/product/Product.sol";
+import {RiskId} from "gif-next/contracts/type/RiskId.sol";
+import {Fee} from "gif-next/contracts/type/Fee.sol";
+import {NftId} from "gif-next/contracts/type/NftId.sol";
+import {ReferralId} from "gif-next/contracts/type/Referral.sol";
+import {Timestamp, Seconds} from "gif-next/contracts/type/Timestamp.sol";
 
 uint64 constant SPECIAL_ROLE_INT = 11111;
 
 contract InsuranceProduct is Product {
 
     constructor(
-        string memory name,
         address registry,
         NftId instanceNftid,
+        address initialOwner,
+        string memory name,
         address token,
         bool isInterceptor,
         address pool,
         address distribution,
-        Fee memory productFee,
-        Fee memory processingFee,
-        address initialOwner
+        bytes memory registryData, 
+        bytes memory componentData 
     )
     {
         initialize(
             registry,
             instanceNftid,
+            initialOwner,
             name,
             token,
             isInterceptor,
             pool,
             distribution,
-            productFee,
-            processingFee,
-            initialOwner); 
+            registryData,
+            componentData); 
     }
 
 
     function initialize(
         address registry,
         NftId instanceNftid,
+        address initialOwner,
         string memory name,
         address token,
         bool isInterceptor,
         address pool,
         address distribution,
-        Fee memory productFee,
-        Fee memory processingFee,
-        address initialOwner
+        bytes memory registryData, 
+        bytes memory componentData 
     )
         public
         virtual
@@ -59,15 +59,14 @@ contract InsuranceProduct is Product {
         initializeProduct(
             registry,
             instanceNftid,
+            initialOwner,
             name,
             token,
             isInterceptor,
             pool,
             distribution,
-            productFee,
-            processingFee,
-            initialOwner,
-            ""); 
+            registryData,
+            componentData); 
     }
 
     function createRisk(
@@ -90,20 +89,21 @@ contract InsuranceProduct is Product {
         );
     }
 
-    function updateRiskState(
-        RiskId id,
-        StateId state
-    ) public {
-        _updateRiskState(
-            id,
-            state
-        );
-    }
+    // TODO: required?
+    // function updateRiskState(
+    //     RiskId id,
+    //     StateId state
+    // ) public {
+    //     _updateRiskState(
+    //         id,
+    //         state
+    //     );
+    // }
     
     function createApplication(
         address applicationOwner,
         RiskId riskId,
-        uint256 sumInsuredAmount,
+        Amount sumInsuredAmount,
         Seconds lifetime,
         bytes memory applicationData,
         NftId bundleNftId,
@@ -125,22 +125,22 @@ contract InsuranceProduct is Product {
         bool requirePremiumPayment,
         Timestamp activateAt
     ) public {
-        _underwrite(policyNftId, requirePremiumPayment, activateAt);
+        _collateralize(policyNftId, requirePremiumPayment, activateAt);
     }
 
-    function collectPremium(
-        NftId policyNftId,
-        Timestamp activateAt
-    ) public {
-        _collectPremium(policyNftId, activateAt);
-    }
+    // function collectPremium(
+    //     NftId policyNftId,
+    //     Timestamp activateAt
+    // ) public {
+    //     _collectPremium(policyNftId, activateAt);
+    // }
 
-    function activate(
-        NftId policyNftId,
-        Timestamp activateAt
-    ) public {
-        _activate(policyNftId, activateAt);
-    }
+    // function activate(
+    //     NftId policyNftId,
+    //     Timestamp activateAt
+    // ) public {
+    //     _activate(policyNftId, activateAt);
+    // }
 
     function close(
         NftId policyNftId
@@ -148,20 +148,20 @@ contract InsuranceProduct is Product {
         _close(policyNftId);
     }
 
-    function doSomethingSpecial() 
-        public 
-        restricted()
-        returns (bool) 
-    {
-        return true;
-    }
+    // function doSomethingSpecial() 
+    //     public 
+    //     restricted()
+    //     returns (bool) 
+    // {
+    //     return true;
+    // }
 
-    function doWhenNotLocked() 
-        public 
-        restricted()
-        returns (bool) 
-    {
-        return true;
-    }
+    // function doWhenNotLocked() 
+    //     public 
+    //     restricted()
+    //     returns (bool) 
+    // {
+    //     return true;
+    // }
 
 }

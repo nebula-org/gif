@@ -1,41 +1,47 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.20;
 
-import {AmountLib} from "gif-next/contracts/types/Amount.sol";
-import {Fee} from "gif-next/contracts/types/Fee.sol";
-import {NftId} from "gif-next/contracts/types/NftId.sol";
-import {Pool} from "gif-next/contracts/components/Pool.sol";
-import {Seconds} from "gif-next/contracts/types/Timestamp.sol";
-import {UFixed} from "gif-next/contracts/types/UFixed.sol";
+import {AmountLib} from "gif-next/contracts/type/Amount.sol";
+import {Fee} from "gif-next/contracts/type/Fee.sol";
+import {NftId} from "gif-next/contracts/type/NftId.sol";
+import {Pool} from "gif-next/contracts/pool/Pool.sol";
+import {Seconds} from "gif-next/contracts/type/Timestamp.sol";
+import {UFixed} from "gif-next/contracts/type/UFixed.sol";
 
 contract BasicPool is Pool {
     
     constructor(
-        string memory name,
         address registry,
         NftId instanceNftId,
+        address initialOwner,
+        string memory name,
         address token,
         bool isInterceptor,
-        address initialOwner
+        bytes memory registryData, 
+        bytes memory componentData
     ) 
     {
         initialize(
-            name,
             registry,
             instanceNftId,
+            name,
             token,
             isInterceptor,
-            initialOwner
+            initialOwner,
+            registryData,
+            componentData
         );
     }
 
     function initialize(
-        string memory name,
         address registry,
         NftId instanceNftId,
+        string memory name,
         address token,
         bool isInterceptor,
-        address initialOwner
+        address initialOwner,
+        bytes memory registryData, 
+        bytes memory componentData
     )
         public
         virtual
@@ -48,7 +54,8 @@ contract BasicPool is Pool {
             token,
             isInterceptor,
             initialOwner,
-            "");
+            registryData,
+            componentData);
     }
 
     function createBundle(
