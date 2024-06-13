@@ -18,9 +18,7 @@ contract Deployer  {
     constructor(
         address registry,
         NftId instanceNftId,
-        address initialDistributionOwner,
-        address initialPoolOwner,
-        address initialProductOwner,
+        address initialOwner,
         string memory deploymentId
     ) 
     {
@@ -29,21 +27,21 @@ contract Deployer  {
         distribution = DistributionDeployer.deployDistribution(
             registry, 
             instanceNftId, 
-            initialDistributionOwner, 
+            initialOwner, 
             deploymentId, 
             address(usdc));
 
         pool = PoolDeployer.deployPool(
             registry, 
             instanceNftId, 
-            initialPoolOwner, 
+            initialOwner, 
             deploymentId, 
             address(usdc));
 
         product = ProductDeployer.deployProduct(
             registry, 
             instanceNftId, 
-            initialProductOwner, 
+            initialOwner, 
             deploymentId, 
             address(usdc), 
             address(pool), 

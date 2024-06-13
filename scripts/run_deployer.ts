@@ -76,8 +76,6 @@ async function main() {
             registryAddress!,
             instanceNftId,
             distributionOwner,
-            distributionOwner,
-            distributionOwner,
             "42"
         ],
         {
