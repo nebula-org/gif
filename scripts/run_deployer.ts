@@ -19,11 +19,13 @@ async function main() {
     const ufixedLibAddress = process.env.UFIXEDLIB_ADDRESS;
     
     const instanceNftId = process.env.INSTANCE_NFTID;
+    console.log(`Instance NFT ID: ${instanceNftId}`);
     const instanceAddress = process.env.INSTANCE_ADDRESS;
     
     const instance = IInstance__factory.connect(instanceAddress!, instanceOwner);
     const instanceAccessManagerAddress = await instance.getInstanceAccessManager();
     const registryAddress = await instance.getRegistry();
+    console.log(`Registry address: ${registryAddress}`);
     const instanceAccessManager = AccessManagerExtendedInitializeable__factory.connect(instanceAccessManagerAddress, instanceOwner);
     await executeTx(() => instanceAccessManager.grantRole(DISTRIBUTION_OWNER_ROLE, distributionOwner.address, 0));
     console.log(`Distribution owner role granted to ${distributionOwner.address} at ${instanceAccessManagerAddress}`);
