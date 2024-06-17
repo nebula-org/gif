@@ -77,7 +77,7 @@ async function main() {
         distributionOwner,
         [
             registryAddress!,
-            "42"
+            "43"
         ],
         {
             "libraries": {
