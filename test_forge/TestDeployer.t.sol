@@ -27,6 +27,10 @@ contract TestDeployer is GifTest {
 
         vm.startPrank(testUser);
 
+        // TODO: move ownership of instance to testUser
+        // TODO: move all usdcmocks to testUser
+        // TODO: create bundle for testuser
+
         Deployer deployer = new Deployer(
             address(registry),
             "test123"
