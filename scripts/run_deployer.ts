@@ -15,7 +15,9 @@ async function main() {
     const feeLibAddress = process.env.FEELIB_ADDRESS;
     const nftIdLibAddress = process.env.NFTIDLIB_ADDRESS;
     const referralLibAddress = process.env.REFERRALLIB_ADDRESS;
+    const riskIdLibAddress = process.env.RISKIDLIB_ADDRESS;
     const roleIdLibAddress = process.env.ROLEIDLIB_ADDRESS;
+    const secondsLibAddress = process.env.SECONDSLIB_ADDRESS;
     const ufixedLibAddress = process.env.UFIXEDLIB_ADDRESS;
     
     const instanceNftId = process.env.INSTANCE_NFTID;
@@ -73,18 +75,22 @@ async function main() {
     const { address: deployerAddress, contract: deployerContract } = await deployContract(
         "Deployer",
         distributionOwner,
-        // [],
         [
             registryAddress!,
-            instanceNftId,
-            distributionOwner,
             "42"
         ],
         {
             "libraries": {
+                "AmountLib": amountLibAddress,
+                "FeeLib": feeLibAddress,
                 "DistributionDeployer": distributionLibAddress,
                 "PoolDeployer": poolLibAddress,
-                "ProductDeployer": productLibAddress
+                "ProductDeployer": productLibAddress,
+                "ReferralLib": referralLibAddress,
+                "RiskIdLib": riskIdLibAddress,
+                "RoleIdLib": roleIdLibAddress,
+                "SecondsLib": secondsLibAddress,
+                "UFixedLib": ufixedLibAddress,
             }
         });
 
@@ -98,11 +104,11 @@ async function main() {
     const productNftId = await deployer.getProductNftId();
     const usdcMockAddress = await deployer.getUsdc();
 
+    logger.info(`USDC mock deployed at ${usdcMockAddress}`);
     logger.info(`Deployer deployed at ${deployerAddress}`);
     logger.info(`Distribution deployed at ${distributionAddress} with NFT ID ${distributionNftId}`);
     logger.info(`Pool deployed at ${poolAddress} with NFT ID ${poolNftId}`);
     logger.info(`Product deployed at ${productAddress} with NFT ID ${productNftId}`);
-    logger.info(`USDC mock deployed at ${usdcMockAddress}`);
 
     // workaround to get script to stop
     process.exit(0);

@@ -24,12 +24,19 @@ async function main() {
     const instanceAccessManagerAddress = await instance.getInstanceAccessManager();
     const registryAddress = await instance.getRegistry();
     const instanceAccessManager = AccessManagerExtendedInitializeable__factory.connect(instanceAccessManagerAddress, instanceOwner);
-    await executeTx(() => instanceAccessManager.grantRole(DISTRIBUTION_OWNER_ROLE, distributionOwner.address, 0));
-    console.log(`Distribution owner role granted to ${distributionOwner.address} at ${instanceAccessManagerAddress}`);
-    await executeTx(() => instanceAccessManager.grantRole(POOL_OWNER_ROLE, poolOwner.address, 0));
-    console.log(`Pool owner role granted to ${poolOwner.address} at ${instanceAccessManagerAddress}`);
-    await executeTx(() => instanceAccessManager.grantRole(PRODUCT_OWNER_ROLE, productOwner.address, 0));
-    console.log(`Product owner role granted to ${productOwner.address} at ${instanceAccessManagerAddress}`);
+    try {
+        await executeTx(() => instanceAccessManager.grantRole(DISTRIBUTION_OWNER_ROLE, distributionOwner.address, 0));
+        console.log(`Distribution owner role granted to ${distributionOwner.address} at ${instanceAccessManagerAddress}`);
+        await executeTx(() => instanceAccessManager.grantRole(POOL_OWNER_ROLE, poolOwner.address, 0));
+        console.log(`Pool owner role granted to ${poolOwner.address} at ${instanceAccessManagerAddress}`);
+        await executeTx(() => instanceAccessManager.grantRole(PRODUCT_OWNER_ROLE, productOwner.address, 0));
+        console.log(`Product owner role granted to ${productOwner.address} at ${instanceAccessManagerAddress}`);
+    } catch (error) {
+        const failure = instanceAccessManager.interface.parseError(error.data);
+        logger.error(failure?.name);
+        logger.error(failure?.args);
+        throw error;
+    }
     
     const { address: usdcMockAddress } = await deployContract(
         "UsdcMock",
@@ -63,6 +70,8 @@ async function main() {
         poolAddress,
         distributionAddress,
         nftIdLibAddress!,
+        amountLibAddress!,
+        feeLibAddress!,
     );
     
     // workaround to get script to stop
@@ -179,6 +188,8 @@ async function deployAndRegisterProduct(
     poolAddress: AddressLike,
     distributionAddress: AddressLike,
     nftIdLibAddress: AddressLike, 
+    amountLibAddress: AddressLike,
+    feeLibAddress: AddressLike,
 ): Promise<{ product: Product, productNftId: bigint, productAddress: AddressLike }> {
     const productName = "InsuranceProduct-" + Math.random().toString(16).substring(7);
     const fee = {
@@ -202,6 +213,8 @@ async function deployAndRegisterProduct(
         ],
         {
             libraries: {
+                AmountLib: amountLibAddress,
+                FeeLib: feeLibAddress,
                 NftIdLib: nftIdLibAddress,
             }
         });
@@ -222,5 +235,6 @@ async function deployAndRegisterProduct(
 
 main().catch((error) => {
     logger.error(error.stack);
+    logger.error(error.data);
     process.exit(1);
 });
