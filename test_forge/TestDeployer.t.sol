@@ -1,15 +1,12 @@
 // SPDX-License-Identifier: APACHE-2.0
 pragma solidity 0.8.20;
 
-import {APPLIED, ACTIVE} from "gif-next/contracts/type/StateId.sol";
+import {ACTIVE, APPLIED} from "gif-next/contracts/type/StateId.sol";
+import {Deployer} from "../contracts/Deployer.sol";
+import {GifTest} from "gif-next/test/base/GifTest.sol";
 import {NftId, NftIdLib} from "gif-next/contracts/type/NftId.sol";
 import {RiskId} from "gif-next/contracts/type/RiskId.sol";
-import {GifTest} from "gif-next/test/base/GifTest.sol";
-
-import {Deployer} from "../contracts/Deployer.sol";
 import {UsdcMock} from "../contracts/UsdcMock.sol";
-import {BasicPool} from "../contracts/BasicPool.sol";
-import {AmountLib} from "gif-next/contracts/type/Amount.sol";
 
 
 contract TestDeployer is GifTest {
