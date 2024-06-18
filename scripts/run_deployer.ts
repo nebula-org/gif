@@ -18,24 +18,13 @@ async function main() {
     const riskIdLibAddress = process.env.RISKIDLIB_ADDRESS;
     const roleIdLibAddress = process.env.ROLEIDLIB_ADDRESS;
     const secondsLibAddress = process.env.SECONDSLIB_ADDRESS;
+    const timestampLibAddress = process.env.TIMESTAMPLIB_ADDRESS;
     const ufixedLibAddress = process.env.UFIXEDLIB_ADDRESS;
-    
-    const instanceNftId = process.env.INSTANCE_NFTID;
-    console.log(`Instance NFT ID: ${instanceNftId}`);
-    const instanceAddress = process.env.INSTANCE_ADDRESS;
-    
-    const instance = IInstance__factory.connect(instanceAddress!, instanceOwner);
-    const instanceAccessManagerAddress = await instance.getInstanceAccessManager();
-    const registryAddress = await instance.getRegistry();
-    console.log(`Registry address: ${registryAddress}`);
-    const instanceAccessManager = AccessManagerExtendedInitializeable__factory.connect(instanceAccessManagerAddress, instanceOwner);
-    await executeTx(() => instanceAccessManager.grantRole(DISTRIBUTION_OWNER_ROLE, distributionOwner.address, 0));
-    console.log(`Distribution owner role granted to ${distributionOwner.address} at ${instanceAccessManagerAddress}`);
-    await executeTx(() => instanceAccessManager.grantRole(POOL_OWNER_ROLE, distributionOwner.address, 0));
-    console.log(`Pool owner role granted to ${distributionOwner.address} at ${instanceAccessManagerAddress}`);
-    await executeTx(() => instanceAccessManager.grantRole(PRODUCT_OWNER_ROLE, distributionOwner.address, 0));
-    console.log(`Product owner role granted to ${distributionOwner.address} at ${instanceAccessManagerAddress}`);
 
+    const registryAddress = process.env.REGISTRY_ADDRESS;
+    
+    console.log(`Registry address: ${registryAddress}`);
+    
     const { address: distributionLibAddress } = await deployContract(
         "DistributionDeployer",
         distributionOwner,
@@ -91,12 +80,15 @@ async function main() {
                 "RiskIdLib": riskIdLibAddress,
                 "RoleIdLib": roleIdLibAddress,
                 "SecondsLib": secondsLibAddress,
+                "TimestampLib": timestampLibAddress,
                 "UFixedLib": ufixedLibAddress,
             }
         });
 
     const deployer = deployerContract as unknown as Deployer;
 
+    const instanceAddress = await deployer.getInstance();
+    const instanceNftId = await deployer.getInstanceNftId();
     const distributionAddress = await deployer.getDistribution();
     const poolAddress = await deployer.getPool();
     const productAddress = await deployer.getProduct();
@@ -105,6 +97,7 @@ async function main() {
     const productNftId = await deployer.getProductNftId();
     const usdcMockAddress = await deployer.getUsdc();
 
+    logger.info(`Instance created at ${instanceAddress} with NFT ID ${instanceNftId}`);
     logger.info(`USDC mock deployed at ${usdcMockAddress}`);
     logger.info(`Deployer deployed at ${deployerAddress}`);
     logger.info(`Distribution deployed at ${distributionAddress} with NFT ID ${distributionNftId}`);

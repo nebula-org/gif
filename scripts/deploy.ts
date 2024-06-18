@@ -17,7 +17,7 @@ async function main() {
     const roleIdLibAddress = process.env.ROLEIDLIB_ADDRESS;
     const ufixedLibAddress = process.env.UFIXEDLIB_ADDRESS;
     
-    const instanceNftId = process.env.INSTANCE_NFTID;
+    const instanceNftId = process.env.INSTANCE_NFT_ID;
     const instanceAddress = process.env.INSTANCE_ADDRESS;
     
     const instance = IInstance__factory.connect(instanceAddress!, instanceOwner);

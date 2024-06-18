@@ -122,6 +122,14 @@ contract Deployer  {
         usdc.transferFrom(address(this), theAllmighty, 10000000000000);
     }
 
+    function getInstance() public view returns (IInstance) {
+        return instance;
+    }
+
+    function getInstanceNftId() public view returns (NftId) {
+        return instanceNftId;
+    }
+
     function getUsdc() public view returns (UsdcMock) {
         return usdc;
     }
