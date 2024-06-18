@@ -1,32 +1,32 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.20;
 
+import {AccessManagerExtendedInitializeable} from "gif-next/contracts/shared/AccessManagerExtendedInitializeable.sol";
 import {AmountLib} from "gif-next/contracts/type/Amount.sol";
 import {BasicDistribution} from "./BasicDistribution.sol";
 import {BasicPool} from "./BasicPool.sol";
+import {ChainNft} from "gif-next/contracts/registry/ChainNft.sol";
+import {DistributionDeployer} from "./DistributionDeployer.sol";
 import {Fee, FeeLib} from "gif-next/contracts/type/Fee.sol";
 import {IComponents} from "gif-next/contracts/instance/module/IComponents.sol";
 import {IInstance} from "gif-next/contracts/instance/Instance.sol";
+import {IInstanceService} from "gif-next/contracts/instance/IInstanceService.sol";
+import {IRegistry} from "gif-next/contracts/registry/IRegistry.sol";
 import {InstanceReader} from "gif-next/contracts/instance/InstanceReader.sol";
 import {InsuranceProduct} from "./InsuranceProduct.sol";
-import {NftId} from "gif-next/contracts/type/NftId.sol";
-import {SecondsLib} from "gif-next/contracts/type/Seconds.sol";
-import {ReferralLib} from "gif-next/contracts/type/Referral.sol";
-import {RiskId, RiskIdLib} from "gif-next/contracts/type/RiskId.sol";
-import {UFixedLib} from "gif-next/contracts/type/UFixed.sol";
-import {UsdcMock} from "./UsdcMock.sol";
-import {IRegistry} from "gif-next/contracts/registry/IRegistry.sol";
-import {IInstanceService} from "gif-next/contracts/instance/IInstanceService.sol";
 import {INSTANCE} from "gif-next/contracts/type/ObjectType.sol";
-import {VersionPart} from "gif-next/contracts/type/Version.sol";
-import {AccessManagerExtendedInitializeable} from "gif-next/contracts/shared/AccessManagerExtendedInitializeable.sol";
-import {PRODUCT_OWNER_ROLE, DISTRIBUTION_OWNER_ROLE, POOL_OWNER_ROLE} from "gif-next/contracts/type/RoleId.sol";
-import {StateId} from "gif-next/contracts/type/StateId.sol";
-import {ChainNft} from "gif-next/contracts/registry/ChainNft.sol";
-import {DistributionDeployer} from "./DistributionDeployer.sol";
+import {NftId} from "gif-next/contracts/type/NftId.sol";
 import {PoolDeployer} from "./PoolDeployer.sol";
 import {ProductDeployer} from "./ProductDeployer.sol";
+import {PRODUCT_OWNER_ROLE, DISTRIBUTION_OWNER_ROLE, POOL_OWNER_ROLE} from "gif-next/contracts/type/RoleId.sol";
+import {ReferralLib} from "gif-next/contracts/type/Referral.sol";
+import {RiskId, RiskIdLib} from "gif-next/contracts/type/RiskId.sol";
+import {SecondsLib} from "gif-next/contracts/type/Seconds.sol";
+import {StateId} from "gif-next/contracts/type/StateId.sol";
 import {TimestampLib} from "gif-next/contracts/type/Timestamp.sol";
+import {UFixedLib} from "gif-next/contracts/type/UFixed.sol";
+import {UsdcMock} from "./UsdcMock.sol";
+import {VersionPart} from "gif-next/contracts/type/Version.sol";
 
 contract Deployer  {
 
