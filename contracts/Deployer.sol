@@ -26,6 +26,7 @@ import {ChainNft} from "gif-next/contracts/registry/ChainNft.sol";
 import {DistributionDeployer} from "./DistributionDeployer.sol";
 import {PoolDeployer} from "./PoolDeployer.sol";
 import {ProductDeployer} from "./ProductDeployer.sol";
+import {TimestampLib} from "gif-next/contracts/type/Timestamp.sol";
 
 contract Deployer  {
 
@@ -199,8 +200,16 @@ contract Deployer  {
         );
     }
 
+    function underwritePolicy(NftId policyNftId) public {
+        product.underwrite(policyNftId, true, TimestampLib.blockTimestamp());
+    }
+
     function getPolicyState(NftId policyNftId) public view returns (StateId) {
         return instanceReader.getPolicyState(policyNftId);
+    }
+
+    function getBundleBalance(NftId bundleNftId) public view returns (uint256) {
+        return instanceReader.getBalanceAmount(bundleNftId).toInt();
     }
 
 }
