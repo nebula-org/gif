@@ -23,6 +23,9 @@ import {AccessManagerExtendedInitializeable} from "gif-next/contracts/shared/Acc
 import {PRODUCT_OWNER_ROLE, DISTRIBUTION_OWNER_ROLE, POOL_OWNER_ROLE} from "gif-next/contracts/type/RoleId.sol";
 import {StateId} from "gif-next/contracts/type/StateId.sol";
 import {ChainNft} from "gif-next/contracts/registry/ChainNft.sol";
+import {DistributionDeployer} from "./DistributionDeployer.sol";
+import {PoolDeployer} from "./PoolDeployer.sol";
+import {ProductDeployer} from "./ProductDeployer.sol";
 
 contract Deployer  {
 
@@ -198,72 +201,6 @@ contract Deployer  {
 
     function getPolicyState(NftId policyNftId) public view returns (StateId) {
         return instanceReader.getPolicyState(policyNftId);
-    }
-
-}
-
-library DistributionDeployer {
-
-    function deployDistribution(address registry,
-            NftId instanceNftId,
-            address initialDistributionOwner,
-            string memory deploymentId,
-            address token) public returns (BasicDistribution) {
-        return new BasicDistribution(
-            registry,
-            instanceNftId,
-            initialDistributionOwner,
-            string.concat("BasicDistribution", deploymentId),
-            token,
-            "",
-            ""
-        );
-    }
-
-}
-
-library PoolDeployer {
-
-    function deployPool(address registry,
-            NftId instanceNftId,
-            address initialPoolOwner,
-            string memory deploymentId,
-            address token) public returns (BasicPool) {
-        return new BasicPool(
-            registry,
-            instanceNftId,
-            initialPoolOwner,
-            string.concat("BasicPool", deploymentId),
-            token,
-            false,
-            "",
-            ""
-        );
-    }
-
-}
-
-library ProductDeployer {
-
-    function deployProduct(address registry,
-            NftId instanceNftId,
-            address initialProductOwner,
-            string memory deploymentId,
-            address token,
-            address poolAddress,
-            address distributionAddress) public returns (InsuranceProduct) {
-        return new InsuranceProduct(
-            registry,
-            instanceNftId,
-            initialProductOwner,
-            string.concat("InsuranceProduct", deploymentId),
-            token,
-            false,
-            poolAddress,
-            distributionAddress,
-            "",
-            ""
-        );
     }
 
 }
