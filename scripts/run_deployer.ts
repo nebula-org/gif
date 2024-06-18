@@ -77,13 +77,14 @@ async function main() {
         distributionOwner,
         [
             registryAddress!,
-            "43"
+            "44"
         ],
         {
             "libraries": {
                 "AmountLib": amountLibAddress,
                 "FeeLib": feeLibAddress,
                 "DistributionDeployer": distributionLibAddress,
+                "NftIdLib": nftIdLibAddress,
                 "PoolDeployer": poolLibAddress,
                 "ProductDeployer": productLibAddress,
                 "ReferralLib": referralLibAddress,
