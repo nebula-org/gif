@@ -27,23 +27,15 @@ contract TestDeployer is GifTest {
 
         vm.startPrank(testUser);
 
-        // TODO: move ownership of instance to testUser
-        // TODO: move all usdcmocks to testUser
-        // TODO: create bundle for testuser
-
         Deployer deployer = new Deployer(
             address(registry),
             "test123"
         );
 
-        deployer.sendUsdcTokens(testUser);
-        RiskId riskId = deployer.initializeComponents("4711");
-        UsdcMock usdc = deployer.getUsdc();
+        RiskId riskId = deployer.getInitialRiskId();
+        NftId newBundleNftId = deployer.getInitialBundleNftId();
 
-        usdc.approve(deployer.getPoolTokenHandler(), 10000);
-        NftId newBundleNftId = deployer.createBundle(testUser, 10000, 30);
-
-        NftId policyNftId = deployer.applyForPolicy(testUser, riskId, 1000, 21, newBundleNftId);
+        NftId policyNftId = deployer.applyForPolicy(testUser, riskId, 1000 * 100000, 21, newBundleNftId);
 
         assertTrue(policyNftId.gtz(), "policyNftId was zero");
         assertEq(chainNft.ownerOf(policyNftId.toInt()), testUser, "testUser not owner of policyNftId");

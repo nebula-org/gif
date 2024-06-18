@@ -22,6 +22,7 @@ import {VersionPart} from "gif-next/contracts/type/Version.sol";
 import {AccessManagerExtendedInitializeable} from "gif-next/contracts/shared/AccessManagerExtendedInitializeable.sol";
 import {PRODUCT_OWNER_ROLE, DISTRIBUTION_OWNER_ROLE, POOL_OWNER_ROLE} from "gif-next/contracts/type/RoleId.sol";
 import {StateId} from "gif-next/contracts/type/StateId.sol";
+import {ChainNft} from "gif-next/contracts/registry/ChainNft.sol";
 
 contract Deployer  {
 
@@ -33,22 +34,33 @@ contract Deployer  {
     BasicDistribution private distribution;
     BasicPool private pool;
     InsuranceProduct private product;
+    NftId private bundleNftId;
+    RiskId private riskId;
     
     constructor(
         address registryAddress,
         string memory deploymentId
     ) 
     {
+        // fetch required components
+        address theAllmighty = msg.sender;
         registry = IRegistry(registryAddress);
         IInstanceService instanceService = IInstanceService(registry.getServiceAddress(INSTANCE(), VersionPart.wrap(3)));
         (instance, instanceNftId) = instanceService.createInstanceClone();
+        ChainNft chainNft = ChainNft(registry.getChainNftAddress());
         instanceReader = instance.getInstanceReader();
 
+        // grant correct roles
         AccessManagerExtendedInitializeable instanceAccessManager = instance.getInstanceAccessManager();
         instanceAccessManager.grantRole(PRODUCT_OWNER_ROLE().toInt(), address(this), 0);
+        instanceAccessManager.grantRole(PRODUCT_OWNER_ROLE().toInt(), theAllmighty, 0);
         instanceAccessManager.grantRole(DISTRIBUTION_OWNER_ROLE().toInt(), address(this), 0);
+        instanceAccessManager.grantRole(DISTRIBUTION_OWNER_ROLE().toInt(), theAllmighty, 0);
         instanceAccessManager.grantRole(POOL_OWNER_ROLE().toInt(), address(this), 0);
+        instanceAccessManager.grantRole(POOL_OWNER_ROLE().toInt(), theAllmighty, 0);        
+        Fee memory bundleFee = FeeLib.toFee(UFixedLib.zero(), 0);
 
+        // deploy token and components
         usdc = new UsdcMock();
 
         distribution = DistributionDeployer.deployDistribution(
@@ -66,6 +78,7 @@ contract Deployer  {
             deploymentId, 
             address(usdc));
         pool.register();
+        pool.approveTokenHandler(AmountLib.max());
 
         product = ProductDeployer.deployProduct(
             registryAddress, 
@@ -76,6 +89,33 @@ contract Deployer  {
             address(pool), 
             address(distribution));
         product.register();
+
+
+        // create a bundle with a coverage of 10k for 30 days
+        usdc.approve(getPoolTokenHandler(), 10000 * 1000000);
+        bundleNftId = pool.createBundle(
+            address(this),
+            bundleFee, 
+            10000 * 1000000, 
+            SecondsLib.toSeconds(30 * 24 * 60 * 60), 
+            ""
+        );
+
+        // create risk
+        riskId = RiskIdLib.toRiskId("1234");
+        bytes memory data = "riskdata";
+        product.createRisk(riskId, data);
+
+        // move ownership of instance, component and bundle nfts to instance owner
+        chainNft.safeTransferFrom(address(this), theAllmighty, instanceNftId.toInt());
+        chainNft.safeTransferFrom(address(this), theAllmighty, distribution.getNftId().toInt());
+        chainNft.safeTransferFrom(address(this), theAllmighty, pool.getNftId().toInt());
+        chainNft.safeTransferFrom(address(this), theAllmighty, product.getNftId().toInt());
+        chainNft.safeTransferFrom(address(this), theAllmighty, bundleNftId.toInt());
+
+        // transfer 10m usdc to owner
+        usdc.approve(address(this), 10000000000000);
+        usdc.transferFrom(address(this), theAllmighty, 10000000000000);
     }
 
     function getUsdc() public view returns (UsdcMock) {
@@ -116,11 +156,16 @@ contract Deployer  {
         return address(productComponentInfo.tokenHandler);
     }
 
-    function initializeComponents(string memory riskIdStr) public returns (RiskId riskId) {
-        pool.approveTokenHandler(AmountLib.max());
+    function getInitialBundleNftId() public view returns (NftId) {
+        return bundleNftId;
+    }
 
+    function getInitialRiskId() public view returns (RiskId) {
+        return riskId;
+    }
+
+    function createRisk(string memory riskIdStr, bytes memory data) public returns (RiskId riskId) {
         RiskId riskId = RiskIdLib.toRiskId(riskIdStr);
-        bytes memory data = "riskdata";
         product.createRisk(riskId, data);
     }
 
@@ -128,9 +173,9 @@ contract Deployer  {
         usdc.transfer(recipient, 1000000);
     }
 
-    function createBundle(address owner, uint256 amount, uint256 lifetimeInDays) public returns (NftId bundleNftId) {
+    function createBundle(address owner, uint256 amount, uint256 lifetimeInDays) public returns (NftId newBundleNftId) {
         Fee memory bundleFee = FeeLib.toFee(UFixedLib.zero(), 0);
-        bundleNftId = pool.createBundle(
+        newBundleNftId = pool.createBundle(
             owner,
             bundleFee, 
             amount, 
