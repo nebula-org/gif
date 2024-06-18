@@ -44,6 +44,11 @@ contract Deployer  {
         (instance, instanceNftId) = instanceService.createInstanceClone();
         instanceReader = instance.getInstanceReader();
 
+        AccessManagerExtendedInitializeable instanceAccessManager = instance.getInstanceAccessManager();
+        instanceAccessManager.grantRole(PRODUCT_OWNER_ROLE().toInt(), address(this), 0);
+        instanceAccessManager.grantRole(DISTRIBUTION_OWNER_ROLE().toInt(), address(this), 0);
+        instanceAccessManager.grantRole(POOL_OWNER_ROLE().toInt(), address(this), 0);
+
         usdc = new UsdcMock();
 
         distribution = DistributionDeployer.deployDistribution(
@@ -72,8 +77,6 @@ contract Deployer  {
             address(distribution));
         product.register();
     }
-
-    // TODO: add fundBundle, defunedBundle, and some policy functions ...
 
     function getUsdc() public view returns (UsdcMock) {
         return usdc;
