@@ -66,10 +66,11 @@ For futher details on function of the `Deployer` contract see the API documentat
 
 - `createRisk` create a new riskId and return the `RiskId` object
 - `sendUsdcTokens` send USDC tokens to an address
-- `createBundle` create a new bundle in the pool and return the `NftId` of the bundle
-- `applyForPolicy` apply for a new policy and return the `NftId` of the policy
+- `createBundle` create a new bundle in the pool
+- `applyForPolicy` apply for a new policy and return the `nftId`. 
+  When run through an rpc node (e.g. remix), the id of the `NftId` of the created policy can be extracted from the transaction log `LogRegistration` field `nftId`.
 - `underwritePolicy` underwrite a policy application identified by `policyNftId` and transfer the premium amount to the bundle (requires a previous approval of the policy amount to the `productTokenHandler`)
-- `getPolicyState` get the current `StateId` of a policy
+- `getPolicyState` get the current `StateId` of a policy 
 - `getBundleBalance` get the balance of the `bundleNftId`
 
 
