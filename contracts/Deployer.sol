@@ -26,6 +26,10 @@ import {TimestampLib} from "gif-next/contracts/type/Timestamp.sol";
 import {UFixedLib} from "gif-next/contracts/type/UFixed.sol";
 import {UsdcMock} from "./UsdcMock.sol";
 import {VersionPart} from "gif-next/contracts/type/Version.sol";
+import {IAuthorization} from "gif-next/contracts/authorization/IAuthorization.sol";
+import {BasicDistributionAuthorization} from "gif-next/contracts/distribution/BasicDistributionAuthorization.sol";
+import {BasicPoolAuthorization} from "gif-next/contracts/pool/BasicPoolAuthorization.sol";
+import {BasicProductAuthorization} from "gif-next/contracts/product/BasicProductAuthorization.sol";
 
 contract Deployer  {
 
@@ -39,7 +43,7 @@ contract Deployer  {
     MyProduct private product;
     NftId private bundleNftId;
     RiskId private riskId;
-    
+    // TODO deployer is 35k now -> product implementation specific authorizations may not fit???
     constructor(
         address registryAddress,
         string memory deploymentId
@@ -58,28 +62,35 @@ contract Deployer  {
         // deploy token and components
         usdc = new UsdcMock();
 
+        IAuthorization distributionAuth = new BasicDistributionAuthorization(string.concat("MyDistribution", deploymentId));
         distribution = DistributionDeployer.deployDistribution(
             registryAddress, 
             instanceNftId, 
-            address(this), 
-            deploymentId, 
+            address(this),
+            string.concat("MyDistribution", deploymentId), 
+            distributionAuth, 
             address(usdc));
         distribution.register();
 
+        IAuthorization poolAuth = new BasicPoolAuthorization(string.concat("MyPool", deploymentId));
         pool = PoolDeployer.deployPool(
             registryAddress, 
             instanceNftId, 
-            address(this), 
-            deploymentId, 
+            address(this),
+            string.concat("MyPool", deploymentId), 
+            poolAuth,
             address(usdc));
         pool.register();
         pool.approveTokenHandler(AmountLib.max());
 
+        IAuthorization productAuth = new BasicProductAuthorization(string.concat("MyProduct", deploymentId));
+        // TODO MyProduct initialization code is to large
         product = ProductDeployer.deployProduct(
             registryAddress, 
             instanceNftId, 
             address(this), 
-            deploymentId, 
+            string.concat("MyProduct", deploymentId),
+            productAuth,
             address(usdc), 
             address(pool), 
             address(distribution));

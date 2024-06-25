@@ -6,25 +6,27 @@ import {NftId} from "gif-next/contracts/type/NftId.sol";
 import {BasicDistributionAuthorization} from "gif-next/contracts/distribution/BasicDistributionAuthorization.sol";
 import {BasicPoolAuthorization} from "gif-next/contracts/pool/BasicPoolAuthorization.sol";
 import {BasicProductAuthorization} from "gif-next/contracts/product/BasicProductAuthorization.sol";
-
+import {IAuthorization} from "gif-next/contracts/authorization/IAuthorization.sol";
 
 library ProductDeployer {
 
-    function deployProduct(address registry,
+    function deployProduct(
+            address registry,
             NftId instanceNftId,
-            address initialProductOwner,
-            string memory deploymentId,
+            address owner,
+            string memory name,
+            IAuthorization auth,
             address token,
             address poolAddress,
             address distributionAddress) public returns (MyProduct) {
         return new MyProduct(
             registry,
             instanceNftId,
-            new BasicProductAuthorization(string.concat("MyProduct", deploymentId)),
-            initialProductOwner,
-            string.concat("MyProduct", deploymentId),
+            auth,
+            owner,
+            name,
             token,
-            false,
+            false, // isInterceptor
             poolAddress,
             distributionAddress
         );
