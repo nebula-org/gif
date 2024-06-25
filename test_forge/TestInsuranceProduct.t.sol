@@ -15,9 +15,13 @@ import {GifTest} from "gif-next/test/base/GifTest.sol";
 import {TimestampLib} from "gif-next/contracts/type/Timestamp.sol";
 import {UFixedLib} from "gif-next/contracts/type/UFixed.sol";
 
-import {BasicDistribution} from "../contracts/BasicDistribution.sol";
-import {BasicPool} from "../contracts/BasicPool.sol";
-import {InsuranceProduct} from "../contracts/InsuranceProduct.sol";
+import {BasicDistributionAuthorization} from "gif-next/contracts/distribution/BasicDistributionAuthorization.sol";
+import {BasicPoolAuthorization} from "gif-next/contracts/pool/BasicPoolAuthorization.sol";
+import {BasicProductAuthorization} from "gif-next/contracts/product/BasicProductAuthorization.sol";
+
+import {MyDistribution} from "../contracts/MyDistribution.sol";
+import {MyPool} from "../contracts/MyPool.sol";
+import {MyProduct} from "../contracts/MyProduct.sol";
 
 
 
@@ -26,13 +30,13 @@ contract TestInsuranceProduct is GifTest {
 
     Seconds public sec30;
 
-    BasicDistribution public testDistribution;
+    MyDistribution public testDistribution;
     NftId public testDistributionNftId;
 
-    BasicPool public testPool;
+    MyPool public testPool;
     NftId public testPoolNftId;
 
-    InsuranceProduct public testProduct;
+    MyProduct public testProduct;
     NftId public testProductNftId;
 
     function setUp() public override {
@@ -40,7 +44,7 @@ contract TestInsuranceProduct is GifTest {
         sec30 = SecondsLib.toSeconds(30);
     }
 
-    function test_InsuranceProduct_underwriteWithPayment() public {
+    function test_MyProduct_underwriteWithPayment() public {
         // GIVEN
         vm.startPrank(registryOwner);
         token.transfer(customer, 1000);
@@ -68,7 +72,7 @@ contract TestInsuranceProduct is GifTest {
         NftId policyNftId = testProduct.createApplication(
             customer,
             riskId,
-            AmountLib.toAmount(1000),
+            1000,
             SecondsLib.toSeconds(30),
             "",
             bundleNftId,
@@ -83,7 +87,7 @@ contract TestInsuranceProduct is GifTest {
 
         // WHEN
         vm.startPrank(productOwner);
-        testProduct.underwrite(policyNftId, true, TimestampLib.blockTimestamp()); 
+        testProduct.collateralize(policyNftId, true, TimestampLib.blockTimestamp()); 
 
         // THEN
         assertTrue(instanceReader.getPolicyState(policyNftId) == ACTIVE(), "policy state not UNDERWRITTEN");
@@ -111,20 +115,19 @@ contract TestInsuranceProduct is GifTest {
 
     function _prepareTestInsuranceProduct() internal {
         vm.startPrank(instanceOwner);
-        instanceAccessManager.grantRole(PRODUCT_OWNER_ROLE().toInt(), productOwner, 0);
-        instanceAccessManager.grantRole(DISTRIBUTION_OWNER_ROLE().toInt(), distributionOwner, 0);
-        instanceAccessManager.grantRole(POOL_OWNER_ROLE().toInt(), poolOwner, 0);
+        instance.grantRole(PRODUCT_OWNER_ROLE(), productOwner);
+        instance.grantRole(DISTRIBUTION_OWNER_ROLE(), distributionOwner);
+        instance.grantRole(POOL_OWNER_ROLE(), poolOwner);
         vm.stopPrank();
 
         vm.startPrank(distributionOwner);
-        testDistribution = new BasicDistribution(
+        testDistribution = new MyDistribution(
             address(registry),
             instanceNftId,
+            new BasicDistributionAuthorization("MyDistribution"),
             distributionOwner,
-            "BasicDistribution",
-            address(token),
-            "", 
-            ""
+            "MyDistribution",
+            address(token)
         );
 
         testDistribution.register();
@@ -132,15 +135,13 @@ contract TestInsuranceProduct is GifTest {
         vm.stopPrank();
 
         vm.startPrank(poolOwner);
-        testPool = new BasicPool(
+        testPool = new MyPool(
             address(registry),
             instanceNftId,
-            poolOwner,
-            "BasicPool",
             address(token),
-            false,
-            "",
-            ""
+            new BasicPoolAuthorization("MyPool"),
+            poolOwner,
+            "MyPool"
         );
         testPool.register();
         testPoolNftId = testPool.getNftId();
@@ -148,17 +149,16 @@ contract TestInsuranceProduct is GifTest {
         vm.stopPrank();
 
         vm.startPrank(productOwner);
-        testProduct = new InsuranceProduct(
+        testProduct = new MyProduct(
             address(registry),
             instanceNftId,
+            new BasicProductAuthorization("MyProduct"),
             productOwner,
-            "InsuranceProduct",
+            "MyProduct",
             address(token),
             false,
             address(testPool), 
-            address(testDistribution),
-            "",
-            ""
+            address(testDistribution)
         );
         
         testProduct.register();
