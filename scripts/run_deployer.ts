@@ -1,11 +1,7 @@
-import { AddressLike, Signer, encodeBytes32String } from "ethers";
-import { AccessManagerExtendedInitializeable__factory, BasicDistribution, Deployer, Distribution, IInstance__factory, Pool, Product } from "../typechain-types";
+import { Deployer } from "../typechain-types";
 import { getNamedAccounts } from "./libs/accounts";
 import { deployContract } from "./libs/deployment";
-import { DISTRIBUTION_OWNER_ROLE, POOL_OWNER_ROLE, PRODUCT_OWNER_ROLE } from "./libs/gif_constants";
-import { executeTx } from "./libs/transaction";
 import { logger } from "./logger";
-import { deployAndRegisterMasterInstance } from "../lib/gif-next/scripts/libs/instance";
 
 async function main() {
     logger.info("deploying components ...");
@@ -18,8 +14,10 @@ async function main() {
     const riskIdLibAddress = process.env.RISKIDLIB_ADDRESS;
     const roleIdLibAddress = process.env.ROLEIDLIB_ADDRESS;
     const secondsLibAddress = process.env.SECONDSLIB_ADDRESS;
+    const strLibAddress = process.env.STRLIB_ADDRESS;
     const timestampLibAddress = process.env.TIMESTAMPLIB_ADDRESS;
     const ufixedLibAddress = process.env.UFIXEDLIB_ADDRESS;
+    const versionPartLibAddress = process.env.VERSIONPARTLIB_ADDRESS;
 
     const registryAddress = process.env.REGISTRY_ADDRESS;
     
@@ -34,6 +32,11 @@ async function main() {
                 "AmountLib": amountLibAddress,
                 "NftIdLib": nftIdLibAddress,
                 "ReferralLib": referralLibAddress,
+                "RoleIdLib": roleIdLibAddress,
+                "SelectorLib": secondsLibAddress,
+                "StrLib": strLibAddress,
+                "TimestampLib": timestampLibAddress,
+                "VersionPartLib": versionPartLibAddress,
             }
         });
     const { address: poolLibAddress } = await deployContract(
