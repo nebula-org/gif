@@ -1,8 +1,5 @@
-@openzeppelin/contracts/=lib/gif-next/lib/openzeppelin-contracts-500/contracts/
-@openzeppelin/contracts-upgradeable/=lib/gif-next/lib/openzeppelin-contracts-upgradeable-500/contracts/
-ds-test/=lib/gif-next/lib/forge-std/lib/ds-test/src/
-erc4626-tests/=lib/gif-next/lib/openzeppelin-contracts/lib/erc4626-tests/
-eth-gas-reporter/=node_modules/eth-gas-reporter/
+@openzeppelin/contracts/=lib/gif-next/lib/openzeppelin-contracts/contracts/
+@openzeppelin/contracts-upgradeable/=lib/gif-next/lib/openzeppelin-contracts-upgradeable/contracts/
 forge-std/=lib/forge-std/
 hardhat/=node_modules/hardhat/
 gif-next/=lib/gif-next/
