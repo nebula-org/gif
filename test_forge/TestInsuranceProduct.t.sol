@@ -121,7 +121,8 @@ contract TestInsuranceProduct is GifTest {
         vm.stopPrank();
 
         vm.startPrank(distributionOwner);
-        testDistribution = new MyDistribution(
+        testDistribution = new MyDistribution();
+        testDistribution.initialize(
             address(registry),
             instanceNftId,
             new BasicDistributionAuthorization("MyDistribution"),
@@ -135,7 +136,8 @@ contract TestInsuranceProduct is GifTest {
         vm.stopPrank();
 
         vm.startPrank(poolOwner);
-        testPool = new MyPool(
+        testPool = new MyPool();
+        testPool.initialize(
             address(registry),
             instanceNftId,
             address(token),
@@ -149,12 +151,13 @@ contract TestInsuranceProduct is GifTest {
         vm.stopPrank();
 
         vm.startPrank(productOwner);
-        testProduct = new MyProduct(
+        testProduct = new MyProduct();
+        testProduct.initialize(
             address(registry),
             instanceNftId,
-            new BasicProductAuthorization("MyProduct"),
             productOwner,
             "MyProduct",
+            new BasicProductAuthorization("MyProduct"),
             address(token),
             false,
             address(testPool), 

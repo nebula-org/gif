@@ -5,7 +5,6 @@ import {AmountLib} from "gif-next/contracts/type/Amount.sol";
 import {MyDistribution} from "./MyDistribution.sol";
 import {MyPool} from "./MyPool.sol";
 import {ChainNft} from "gif-next/contracts/registry/ChainNft.sol";
-import {DistributionDeployer} from "./DistributionDeployer.sol";
 import {Fee, FeeLib} from "gif-next/contracts/type/Fee.sol";
 import {IComponents} from "gif-next/contracts/instance/module/IComponents.sol";
 import {IInstance} from "gif-next/contracts/instance/Instance.sol";
@@ -15,8 +14,6 @@ import {InstanceReader} from "gif-next/contracts/instance/InstanceReader.sol";
 import {MyProduct} from "./MyProduct.sol";
 import {INSTANCE} from "gif-next/contracts/type/ObjectType.sol";
 import {NftId} from "gif-next/contracts/type/NftId.sol";
-import {PoolDeployer} from "./PoolDeployer.sol";
-import {ProductDeployer} from "./ProductDeployer.sol";
 import {PRODUCT_OWNER_ROLE, DISTRIBUTION_OWNER_ROLE, POOL_OWNER_ROLE} from "gif-next/contracts/type/RoleId.sol";
 import {ReferralLib} from "gif-next/contracts/type/Referral.sol";
 import {RiskId, RiskIdLib} from "gif-next/contracts/type/RiskId.sol";
@@ -46,6 +43,9 @@ contract Deployer  {
     // TODO deployer is 35k now -> product implementation specific authorizations may not fit???
     constructor(
         address registryAddress,
+        address distributionAddress,
+        address poolAddress,
+        address productAddress,
         string memory deploymentId
     ) 
     {
@@ -63,35 +63,39 @@ contract Deployer  {
         usdc = new UsdcMock();
 
         IAuthorization distributionAuth = new BasicDistributionAuthorization(string.concat("MyDistribution", deploymentId));
-        distribution = DistributionDeployer.deployDistribution(
+        distribution = MyDistribution(distributionAddress);
+        distribution.initialize(
             registryAddress, 
             instanceNftId, 
+            distributionAuth, 
             address(this),
             string.concat("MyDistribution", deploymentId), 
-            distributionAuth, 
             address(usdc));
         distribution.register();
 
         IAuthorization poolAuth = new BasicPoolAuthorization(string.concat("MyPool", deploymentId));
-        pool = PoolDeployer.deployPool(
+        pool = MyPool(poolAddress);
+        pool.initialize(
             registryAddress, 
             instanceNftId, 
-            address(this),
-            string.concat("MyPool", deploymentId), 
+            address(usdc),
             poolAuth,
-            address(usdc));
+            address(this),
+            string.concat("MyPool", deploymentId)
+            );
         pool.register();
         pool.approveTokenHandler(AmountLib.max());
 
         IAuthorization productAuth = new BasicProductAuthorization(string.concat("MyProduct", deploymentId));
-        // TODO MyProduct initialization code is to large
-        product = ProductDeployer.deployProduct(
+        product = MyProduct(productAddress);
+        product.initialize(
             registryAddress, 
             instanceNftId, 
             address(this), 
             string.concat("MyProduct", deploymentId),
             productAuth,
             address(usdc), 
+            false,
             address(pool), 
             address(distribution));
         product.register();

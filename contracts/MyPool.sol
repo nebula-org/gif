@@ -11,32 +11,32 @@ import {UFixed} from "gif-next/contracts/type/UFixed.sol";
 
 contract MyPool is BasicPool {
     
-    constructor(
+    // constructor(
+    //     address registry,
+    //     NftId instanceNftId,
+    //     address token,
+    //     IAuthorization authorization,
+    //     address initialOwner,
+    //     string memory name
+    // ) 
+    // {
+    //     initialize(
+    //         registry,
+    //         instanceNftId,
+    //         name,
+    //         token,
+    //         authorization,
+    //         initialOwner
+    //     );
+    // }
+
+    function initialize(
         address registry,
         NftId instanceNftId,
         address token,
         IAuthorization authorization,
         address initialOwner,
         string memory name
-    ) 
-    {
-        initialize(
-            registry,
-            instanceNftId,
-            name,
-            token,
-            authorization,
-            initialOwner
-        );
-    }
-
-    function initialize(
-        address registry,
-        NftId instanceNftId,
-        string memory name,
-        address token,
-        IAuthorization authorization,
-        address initialOwner
     )
         public
         virtual

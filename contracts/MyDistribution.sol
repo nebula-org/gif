@@ -11,23 +11,23 @@ import {UFixed} from "gif-next/contracts/type/UFixed.sol";
 
 contract MyDistribution is BasicDistribution {
     
-    constructor(
-        address registry,
-        NftId instanceNftId,
-        IAuthorization authorization,
-        address initialOwner,
-        string memory name,
-        address token
-    ) 
-    {
-        initialize(
-            registry,
-            instanceNftId,
-            authorization,
-            initialOwner,
-            name,
-            token);
-    }
+    // constructor(
+    //     address registry,
+    //     NftId instanceNftId,
+    //     IAuthorization authorization,
+    //     address initialOwner,
+    //     string memory name,
+    //     address token
+    // ) 
+    // {
+    //     initialize(
+    //         registry,
+    //         instanceNftId,
+    //         authorization,
+    //         initialOwner,
+    //         name,
+    //         token);
+    // }
 
     function initialize(
         address registry,

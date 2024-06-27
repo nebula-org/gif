@@ -23,32 +23,6 @@ contract TestDeployer is GifTest {
         super.setUp();
     }
 
-    function test_DeployerSetUp() public {
-        address testUser = makeAddr("testUser");
-        vm.startPrank(testUser);
-        Deployer deployer = new Deployer(
-            address(registry),
-            "test123"
-        );
-        // solhint-disable
-        console.log("Deployer creation code length", type(Deployer).creationCode.length);
-        console.log("Deployer runtime code length", type(Deployer).runtimeCode.length);
-
-        console.log("My product creation code length", type(MyProduct).creationCode.length);
-        console.log("My product runtime code length", type(MyProduct).runtimeCode.length);
-        console.log("BasicProductAuthorization creation code length", type(BasicProductAuthorization).creationCode.length);
-        console.log("BasicProductAuthorization runtime code length", type(BasicProductAuthorization).runtimeCode.length);
-
-        console.log("My pool creation code length", type(MyPool).creationCode.length);
-        console.log("My pool runtime code length", type(MyPool).runtimeCode.length);
-        console.log("BasicPoolAuthorization creation code length", type(BasicPoolAuthorization).creationCode.length);
-        console.log("BasicPoolAuthorization runtime code length", type(BasicPoolAuthorization).runtimeCode.length);
-
-        console.log("My distribution creation code length", type(MyDistribution).creationCode.length);
-        console.log("My distribution runtime code length", type(MyDistribution).runtimeCode.length);
-        // solhint-enable
-    }
-
     function test_Deployer_apply() public {
         address testUser = makeAddr("testUser");
 
@@ -59,8 +33,15 @@ contract TestDeployer is GifTest {
 
         vm.startPrank(testUser);
 
+        MyDistribution distribution = new MyDistribution();
+        MyPool pool = new MyPool();
+        MyProduct product = new MyProduct();
+        
         Deployer deployer = new Deployer(
             address(registry),
+            address(distribution),
+            address(pool),
+            address(product),
             "test123"
         );
 
@@ -85,8 +66,15 @@ contract TestDeployer is GifTest {
 
         vm.startPrank(testUser);
 
+        MyDistribution distribution = new MyDistribution();
+        MyPool pool = new MyPool();
+        MyProduct product = new MyProduct();
+
         Deployer deployer = new Deployer(
             address(registry),
+            address(distribution),
+            address(pool),
+            address(product),
             "test123"
         );
 
