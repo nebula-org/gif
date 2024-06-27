@@ -1,23 +1,19 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.20;
 
-import {AccessManagerExtendedInitializeable} from "gif-next/contracts/shared/AccessManagerExtendedInitializeable.sol";
 import {AmountLib} from "gif-next/contracts/type/Amount.sol";
-import {BasicDistribution} from "./BasicDistribution.sol";
-import {BasicPool} from "./BasicPool.sol";
+import {MyDistribution} from "./MyDistribution.sol";
+import {MyPool} from "./MyPool.sol";
 import {ChainNft} from "gif-next/contracts/registry/ChainNft.sol";
-import {DistributionDeployer} from "./DistributionDeployer.sol";
 import {Fee, FeeLib} from "gif-next/contracts/type/Fee.sol";
 import {IComponents} from "gif-next/contracts/instance/module/IComponents.sol";
 import {IInstance} from "gif-next/contracts/instance/Instance.sol";
 import {IInstanceService} from "gif-next/contracts/instance/IInstanceService.sol";
 import {IRegistry} from "gif-next/contracts/registry/IRegistry.sol";
 import {InstanceReader} from "gif-next/contracts/instance/InstanceReader.sol";
-import {InsuranceProduct} from "./InsuranceProduct.sol";
+import {MyProduct} from "./MyProduct.sol";
 import {INSTANCE} from "gif-next/contracts/type/ObjectType.sol";
 import {NftId} from "gif-next/contracts/type/NftId.sol";
-import {PoolDeployer} from "./PoolDeployer.sol";
-import {ProductDeployer} from "./ProductDeployer.sol";
 import {PRODUCT_OWNER_ROLE, DISTRIBUTION_OWNER_ROLE, POOL_OWNER_ROLE} from "gif-next/contracts/type/RoleId.sol";
 import {ReferralLib} from "gif-next/contracts/type/Referral.sol";
 import {RiskId, RiskIdLib} from "gif-next/contracts/type/RiskId.sol";
@@ -27,6 +23,10 @@ import {TimestampLib} from "gif-next/contracts/type/Timestamp.sol";
 import {UFixedLib} from "gif-next/contracts/type/UFixed.sol";
 import {UsdcMock} from "./UsdcMock.sol";
 import {VersionPart} from "gif-next/contracts/type/Version.sol";
+import {IAuthorization} from "gif-next/contracts/authorization/IAuthorization.sol";
+import {BasicDistributionAuthorization} from "gif-next/contracts/distribution/BasicDistributionAuthorization.sol";
+import {BasicPoolAuthorization} from "gif-next/contracts/pool/BasicPoolAuthorization.sol";
+import {BasicProductAuthorization} from "gif-next/contracts/product/BasicProductAuthorization.sol";
 
 contract Deployer  {
 
@@ -35,14 +35,17 @@ contract Deployer  {
     NftId private instanceNftId;
     InstanceReader private instanceReader;
     UsdcMock private usdc;
-    BasicDistribution private distribution;
-    BasicPool private pool;
-    InsuranceProduct private product;
+    MyDistribution private distribution;
+    MyPool private pool;
+    MyProduct private product;
     NftId private bundleNftId;
     RiskId private riskId;
-    
+    // TODO deployer is 35k now -> product implementation specific authorizations may not fit???
     constructor(
         address registryAddress,
+        address distributionAddress,
+        address poolAddress,
+        address productAddress,
         string memory deploymentId
     ) 
     {
@@ -50,46 +53,49 @@ contract Deployer  {
         address theAllmighty = msg.sender;
         registry = IRegistry(registryAddress);
         IInstanceService instanceService = IInstanceService(registry.getServiceAddress(INSTANCE(), VersionPart.wrap(3)));
-        (instance, instanceNftId) = instanceService.createInstanceClone();
+        (instance, instanceNftId) = instanceService.createInstance();
         ChainNft chainNft = ChainNft(registry.getChainNftAddress());
         instanceReader = instance.getInstanceReader();
 
-        // grant correct roles
-        AccessManagerExtendedInitializeable instanceAccessManager = instance.getInstanceAccessManager();
-        instanceAccessManager.grantRole(PRODUCT_OWNER_ROLE().toInt(), address(this), 0);
-        instanceAccessManager.grantRole(PRODUCT_OWNER_ROLE().toInt(), theAllmighty, 0);
-        instanceAccessManager.grantRole(DISTRIBUTION_OWNER_ROLE().toInt(), address(this), 0);
-        instanceAccessManager.grantRole(DISTRIBUTION_OWNER_ROLE().toInt(), theAllmighty, 0);
-        instanceAccessManager.grantRole(POOL_OWNER_ROLE().toInt(), address(this), 0);
-        instanceAccessManager.grantRole(POOL_OWNER_ROLE().toInt(), theAllmighty, 0);        
         Fee memory bundleFee = FeeLib.toFee(UFixedLib.zero(), 0);
 
         // deploy token and components
         usdc = new UsdcMock();
 
-        distribution = DistributionDeployer.deployDistribution(
+        IAuthorization distributionAuth = new BasicDistributionAuthorization(string.concat("MyDistribution", deploymentId));
+        distribution = MyDistribution(distributionAddress);
+        distribution.initialize(
             registryAddress, 
             instanceNftId, 
-            address(this), 
-            deploymentId, 
+            distributionAuth, 
+            address(this),
+            string.concat("MyDistribution", deploymentId), 
             address(usdc));
         distribution.register();
 
-        pool = PoolDeployer.deployPool(
+        IAuthorization poolAuth = new BasicPoolAuthorization(string.concat("MyPool", deploymentId));
+        pool = MyPool(poolAddress);
+        pool.initialize(
             registryAddress, 
             instanceNftId, 
-            address(this), 
-            deploymentId, 
-            address(usdc));
+            address(usdc),
+            poolAuth,
+            address(this),
+            string.concat("MyPool", deploymentId)
+            );
         pool.register();
         pool.approveTokenHandler(AmountLib.max());
 
-        product = ProductDeployer.deployProduct(
+        IAuthorization productAuth = new BasicProductAuthorization(string.concat("MyProduct", deploymentId));
+        product = MyProduct(productAddress);
+        product.initialize(
             registryAddress, 
             instanceNftId, 
             address(this), 
-            deploymentId, 
+            string.concat("MyProduct", deploymentId),
+            productAuth,
             address(usdc), 
+            false,
             address(pool), 
             address(distribution));
         product.register();
@@ -138,7 +144,7 @@ contract Deployer  {
         return distribution.getNftId();
     }
 
-    function getDistribution() public view returns (BasicDistribution) {
+    function getDistribution() public view returns (MyDistribution) {
         return distribution;
     }
 
@@ -146,7 +152,7 @@ contract Deployer  {
         return pool.getNftId();
     }
 
-    function getPool() public view returns (BasicPool) {
+    function getPool() public view returns (MyPool) {
         return pool;
     }
 
@@ -159,7 +165,7 @@ contract Deployer  {
         return product.getNftId();
     }
 
-    function getProduct() public view returns (InsuranceProduct) {
+    function getProduct() public view returns (MyProduct) {
         return product;
     }
 
@@ -200,7 +206,7 @@ contract Deployer  {
         policyNftId = product.createApplication(
             customer,
             riskId,
-            AmountLib.toAmount(amount),
+            amount,
             SecondsLib.toSeconds(lifetimeInDays * 24 * 60 * 60),
             "",
             bundleNftId,
@@ -209,7 +215,7 @@ contract Deployer  {
     }
 
     function underwritePolicy(NftId policyNftId) public {
-        product.underwrite(policyNftId, true, TimestampLib.blockTimestamp());
+        product.collateralize(policyNftId, true, TimestampLib.blockTimestamp());
     }
 
     function getPolicyState(NftId policyNftId) public view returns (StateId) {

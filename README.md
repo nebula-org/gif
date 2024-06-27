@@ -2,36 +2,39 @@
 
 ## What's this?
 
-This is a sandbox repository for the GIF-next project. It contains example components and tests for the GIF-next project.
-The contracts `contracts/BasicDistribution.sol`, `contracts/BasicPool.sol` and `contracts/InsuranceProduct.sol` are examples for components that can be used in the GIF framework. 
+This is a sandbox repository for the GIF-next project. It contains simple example components and tests for the GIF-next project.
+The contracts `contracts/MyDistribution.sol`, `contracts/MyPool.sol` and `contracts/MyProduct.sol` are examples for components that can be used in the GIF framework. 
 None if them do more then expose the internal funtions right now, but they can be used as a basis to build own components. 
-Additionally the contract `contracts/Deployer.sol` is a meta contract that helps to deploy and prepare a new instance just by deploying the meta contract. This is useful for trying out the components quickly. See below (section _Quickstart_) on instructions on how to do this. 
+Additionally the contract `contracts/Deployer.sol` is a meta contract that helps to initialize components and prepare a new instance just by deploying the meta contract. This is useful for trying out the components quickly. See below (section _Quickstart_) on instructions on how to do this. 
 
-The project also contains an example foundry forge based unit test `TestInsuranceProduct.t.sol` which demonstrates how to write a test for the `InsuranceProduct` contract.
+The project also contains an example foundry forge based unit test `TestMyProduct.t.sol` which demonstrates how to write a test for the `MyProduct` contract.
 
 ## Notes
 
 - Renaming the contracts requires adapting the deployment script to be able to deploy the renamed contracts. The same goes for including additional libraries in the component contracts.
-- Updating the GIF framework requires updating the submodule in the `gif-next` directory. Since `forge update gif-next` will always update to the latest commit on the develop branch of the `gif-next` repo. If a specific version if required, its easier to first remove the module using `forge remove gif=next` and then re-add it again using `forge install gif-next@version`. 
+- Updating the GIF framework requires updating the submodule in the `gif-next` directory. Since `forge update gif-next` will always update to the latest commit on the develop branch of the `gif-next` repo. If a specific version if required, its easier to first remove the module using `forge remove gif-next` and then re-add it again using `forge install gif-next@version`. 
 - Updating the GIF framework might require changes to components as well as the deployment script. 
 
 ## Quickstart
 
 These scripts/contracts require a chain where a gif-next instance is already deployed. 
 
-### All-in-one setup using the `Deployer` contract
+### Quickstart setup using the `Deployer` contract
 
-_Note_: This contract can easily be deployed from Remix or a similar IDE to get up and running quickly. It can be compiled and deployed without the need for a local development environment and external dependencies (everything is self-contained in the contract/respository).
+_Note_: This contract can easily be deployed from Remix or a similar IDE to get up and running quickly. It can be compiled and deployed without the need for a local development environment and external dependencies (almost everything is self-contained in the contract/respository).
 
-Deploy the `Deployer` contract to the chain where the GIF instance is deployed. 
+Deploy the `MyDistribution`, `MyPool`, `MyProduct` and `Deployer` contracts to the chain where the GIF instance is deployed. 
 The deployer contract requires the following parameters:
 - `registryAddress` the address of the deployed registry
+- `distributionAddress` the address of the distribution component
+- `poolAddress` the address of the pool component
+- `productAddress` the address of the product component
 - `deploymentId` a unique id for this deployment
 
 During the deployment the contract will 
 - create a new instance on the GIF framework
 - deploy a mock USDC token
-- deploy the components `BasicDistribution`, `BasicPool` and `InsuranceProduct` and register them with the new instance
+- initialize the components `MyDistribution`, `MyPool` and `MyProduct` and register them with the new instance
 - create a new bundle in the pool with a coverage amount of 10000 USDC
 - a new riskId for creating new policies
 - transfer the ownership of the instance, components and bundle to the caller of the deployment
@@ -42,7 +45,21 @@ For futher details on function of the `Deployer` contract see the API documentat
 
 ### Deploy the contract via hardhat
 
-run the script `scripts/run_deployer.ts` with these environment variables set: `AMOUNTLIB_ADDRESS`, `FEELIB_ADDRESS`, `NFTIDLIB_ADDRESS`, `REFERRALLIB_ADDRESS`, `RISKIDLIB_ADDRESS`, `ROLEIDLIB_ADDRESS`, `SECONDSLIB_ADDRESS`, `TIMESTAMPLIB_ADDRESS`, `UFIXEDLIB_ADDRESS`, `REGISTRY_ADDRESS`
+run the script `scripts/run_deployer.ts` with these environment variables set: 
+
+- AMOUNTLIB_ADDRESS
+- FEELIB_ADDRESS
+- NFTIDLIB_ADDRESS
+- REFERRALLIB_ADDRESS
+- RISKIDLIB_ADDRESS
+- ROLEIDLIB_ADDRESS
+- SECONDSLIB_ADDRESS
+- SELECTORLIB_ADDRESS
+- STRLIB_ADDRESS
+- TIMESTAMPLIB_ADDRESS
+- UFIXEDLIB_ADDRESS
+- VERSIONPARTLIB_ADDRESS
+- REGISTRY_ADDRESS
 
 This will deploy the `Deployer` contract and print the addresses and nfts of the deployed components. 
 For futher details on function of the `Deployer` contract see the API documentation below.

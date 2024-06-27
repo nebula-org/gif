@@ -1,11 +1,7 @@
-import { AddressLike, Signer, encodeBytes32String } from "ethers";
-import { AccessManagerExtendedInitializeable__factory, BasicDistribution, Deployer, Distribution, IInstance__factory, Pool, Product } from "../typechain-types";
+import { Deployer } from "../typechain-types";
 import { getNamedAccounts } from "./libs/accounts";
 import { deployContract } from "./libs/deployment";
-import { DISTRIBUTION_OWNER_ROLE, POOL_OWNER_ROLE, PRODUCT_OWNER_ROLE } from "./libs/gif_constants";
-import { executeTx } from "./libs/transaction";
 import { logger } from "./logger";
-import { deployAndRegisterMasterInstance } from "../lib/gif-next/scripts/libs/instance";
 
 async function main() {
     logger.info("deploying components ...");
@@ -18,15 +14,18 @@ async function main() {
     const riskIdLibAddress = process.env.RISKIDLIB_ADDRESS;
     const roleIdLibAddress = process.env.ROLEIDLIB_ADDRESS;
     const secondsLibAddress = process.env.SECONDSLIB_ADDRESS;
+    const selectorLibAddress = process.env.SELECTORLIB_ADDRESS;
+    const strLibAddress = process.env.STRLIB_ADDRESS;
     const timestampLibAddress = process.env.TIMESTAMPLIB_ADDRESS;
     const ufixedLibAddress = process.env.UFIXEDLIB_ADDRESS;
+    const versionPartLibAddress = process.env.VERSIONPARTLIB_ADDRESS;
 
     const registryAddress = process.env.REGISTRY_ADDRESS;
     
     console.log(`Registry address: ${registryAddress}`);
     
-    const { address: distributionLibAddress } = await deployContract(
-        "DistributionDeployer",
+    const { address: distributionAddress } = await deployContract(
+        "MyDistribution",
         distributionOwner,
         [],
         {
@@ -36,8 +35,8 @@ async function main() {
                 "ReferralLib": referralLibAddress,
             }
         });
-    const { address: poolLibAddress } = await deployContract(
-        "PoolDeployer",
+    const { address: poolAddress } = await deployContract(
+        "MyPool",
         distributionOwner,
         [],
         {
@@ -49,8 +48,8 @@ async function main() {
                 "UFixedLib": ufixedLibAddress,
             }
         });
-    const { address: productLibAddress } = await deployContract(
-        "ProductDeployer",
+    const { address: productAddress } = await deployContract(
+        "MyProduct",
         distributionOwner,
         [],
         {
@@ -66,22 +65,25 @@ async function main() {
         distributionOwner,
         [
             registryAddress!,
+            distributionAddress,
+            poolAddress,
+            productAddress,
             "44"
         ],
         {
             "libraries": {
                 "AmountLib": amountLibAddress,
                 "FeeLib": feeLibAddress,
-                "DistributionDeployer": distributionLibAddress,
                 "NftIdLib": nftIdLibAddress,
-                "PoolDeployer": poolLibAddress,
-                "ProductDeployer": productLibAddress,
                 "ReferralLib": referralLibAddress,
                 "RiskIdLib": riskIdLibAddress,
                 "RoleIdLib": roleIdLibAddress,
                 "SecondsLib": secondsLibAddress,
+                "SelectorLib": selectorLibAddress,
+                "StrLib": strLibAddress,
                 "TimestampLib": timestampLibAddress,
                 "UFixedLib": ufixedLibAddress,
+                "VersionPartLib": versionPartLibAddress,
             }
         });
 
@@ -89,9 +91,6 @@ async function main() {
 
     const instanceAddress = await deployer.getInstance();
     const instanceNftId = await deployer.getInstanceNftId();
-    const distributionAddress = await deployer.getDistribution();
-    const poolAddress = await deployer.getPool();
-    const productAddress = await deployer.getProduct();
     const distributionNftId = await deployer.getDistributionNftId();
     const poolNftId = await deployer.getPoolNftId();
     const productNftId = await deployer.getProductNftId();
