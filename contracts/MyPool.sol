@@ -10,25 +10,6 @@ import {Seconds} from "gif-next/contracts/type/Timestamp.sol";
 import {UFixed} from "gif-next/contracts/type/UFixed.sol";
 
 contract MyPool is BasicPool {
-    
-    // constructor(
-    //     address registry,
-    //     NftId instanceNftId,
-    //     address token,
-    //     IAuthorization authorization,
-    //     address initialOwner,
-    //     string memory name
-    // ) 
-    // {
-    //     initialize(
-    //         registry,
-    //         instanceNftId,
-    //         name,
-    //         token,
-    //         authorization,
-    //         initialOwner
-    //     );
-    // }
 
     function initialize(
         address registry,

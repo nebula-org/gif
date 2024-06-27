@@ -109,8 +109,8 @@ contract TestInsuranceProduct is GifTest {
         // assertEq(token.balanceOf(address(customer)), 880, "customer balance not 880");
         // assertEq(token.balanceOf(testPool.getWallet()), 10100, "pool balance not 10100");
 
-        assertEq(instanceBundleManager.activePolicies(bundleNftId), 1, "expected one active policy");
-        assertTrue(instanceBundleManager.getActivePolicy(bundleNftId, 0).eq(policyNftId), "active policy nft id in bundle manager not equal to policy nft id");
+        assertEq(instanceBundleSet.activePolicies(bundleNftId), 1, "expected one active policy");
+        assertTrue(instanceBundleSet.getActivePolicy(bundleNftId, 0).eq(policyNftId), "active policy nft id in bundle manager not equal to policy nft id");
     }
 
     function _prepareTestInsuranceProduct() internal {

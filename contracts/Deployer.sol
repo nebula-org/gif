@@ -53,7 +53,7 @@ contract Deployer  {
         address theAllmighty = msg.sender;
         registry = IRegistry(registryAddress);
         IInstanceService instanceService = IInstanceService(registry.getServiceAddress(INSTANCE(), VersionPart.wrap(3)));
-        (instance, instanceNftId) = instanceService.createInstanceClone();
+        (instance, instanceNftId) = instanceService.createInstance();
         ChainNft chainNft = ChainNft(registry.getChainNftAddress());
         instanceReader = instance.getInstanceReader();
 
