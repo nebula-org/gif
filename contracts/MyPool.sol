@@ -43,7 +43,7 @@ contract MyPool is BasicPool {
         virtual 
         returns(NftId bundleNftId)
     {
-        bundleNftId = _createBundle(
+        (bundleNftId,) = _createBundle(
             owner,
             fee,
             AmountLib.toAmount(initialAmount),
