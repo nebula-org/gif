@@ -79,7 +79,7 @@ contract Deployer  {
         distribution = MyDistribution(distributionAddress);
         distribution.initialize(
             registryAddress, 
-            instanceNftId, 
+            getProductNftId(), 
             distributionAuth, 
             address(this),
             string.concat("MyDistribution", deploymentId), 

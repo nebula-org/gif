@@ -13,7 +13,7 @@ contract MyDistribution is BasicDistribution {
 
     function initialize(
         address registry,
-        NftId instanceNftId,
+        NftId productNftId,
         IAuthorization authorization,
         address initialOwner, 
         string memory name,
@@ -25,7 +25,7 @@ contract MyDistribution is BasicDistribution {
     {
         _initializeBasicDistribution(
             registry,
-            instanceNftId,
+            productNftId,
             authorization,
             initialOwner,
             name,

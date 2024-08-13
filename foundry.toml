@@ -4,7 +4,7 @@ out = 'artifacts_forge'
 libs = ['node_modules', 'lib']
 test = 'test_forge'
 cache_path  = 'cache_forge'
-solc_version = "0.8.20"
+solc_version = "0.8.26"
 
 ffi = true
 
