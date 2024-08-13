@@ -24,8 +24,8 @@
     "@etherisc/gif-next": "0.0.2-e0ff180-567",
     "@nomicfoundation/hardhat-foundry": "^1.1.2",
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "@typescript-eslint/eslint-plugin": "^7.14.1",
-    "@typescript-eslint/parser": "^7.14.1",
+    "@typescript-eslint/eslint-plugin": "^8.1.0",
+    "@typescript-eslint/parser": "^8.1.0",
     "dotenv": "^16.3.1",
     "eslint": "^8.50.0",
     "hardhat": "^2.22.5",
@@ -36,6 +36,7 @@
   "dependencies": {
     "abi-coder": "^5.0.0",
     "ethers": "^6.13.1",
+    "ethers-decode-error": "^2.1.3",
     "winston": "^3.10.0"
   }
 }
