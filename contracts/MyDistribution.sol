@@ -15,7 +15,7 @@ contract MyDistribution is BasicDistribution {
         address registry,
         NftId instanceNftId,
         IAuthorization authorization,
-        address initialOwner,
+        address initialOwner, 
         string memory name,
         address token
     )

@@ -6,6 +6,7 @@ import {BasicProduct} from "gif-next/contracts/product/BasicProduct.sol";
 import {ClaimId} from "gif-next/contracts/type/ClaimId.sol";
 import {Fee} from "gif-next/contracts/type/Fee.sol";
 import {IAuthorization} from "gif-next/contracts/authorization/IAuthorization.sol";
+import {IComponents} from "gif-next/contracts/instance/module/IComponents.sol";
 import {NftId} from "gif-next/contracts/type/NftId.sol";
 import {PayoutId} from "gif-next/contracts/type/PayoutId.sol";
 import {ReferralId} from "gif-next/contracts/type/Referral.sol";
@@ -24,28 +25,23 @@ contract MyProduct is BasicProduct {
     function initialize(
         address registry,
         NftId instanceNftid,
-        address initialOwner,
         string memory name,
-        IAuthorization authorization,
         address token,
-        bool isInterceptor,
-        address pool,
-        address distribution
+        IComponents.ProductInfo memory productInfo,
+        IAuthorization authorization,
+        address initialOwner
     )
         public
-        virtual
         initializer()
     {
         _initializeBasicProduct(
             registry,
             instanceNftid,
-            authorization,
-            initialOwner,
             name,
             token,
-            isInterceptor,
-            pool,
-            distribution); 
+            productInfo,
+            authorization,
+            initialOwner); 
     }
 
     function createRisk(
@@ -81,16 +77,26 @@ contract MyProduct is BasicProduct {
     function createApplication(
         address applicationOwner,
         RiskId riskId,
-        uint256 sumInsuredAmount,
+        uint256 sumInsured,
         Seconds lifetime,
         bytes memory applicationData,
         NftId bundleNftId,
         ReferralId referralId
     ) public returns (NftId nftId) {
+        Amount sumInsuredAmount = AmountLib.toAmount(sumInsured);
+        Amount premiumAmount = calculatePremium(
+            sumInsuredAmount,
+            riskId,
+            lifetime,
+            applicationData,
+            bundleNftId,
+            referralId);
+
         return _createApplication(
             applicationOwner,
             riskId,
-            AmountLib.toAmount(sumInsuredAmount),
+            sumInsuredAmount,
+            premiumAmount,
             lifetime,
             bundleNftId,
             referralId,
@@ -98,12 +104,15 @@ contract MyProduct is BasicProduct {
         );
     }
 
-    function collateralize(
-        NftId policyNftId,
+    function createPolicy(
+        NftId applicationNftId,
         bool requirePremiumPayment,
         Timestamp activateAt
     ) public {
-        _collateralize(policyNftId, requirePremiumPayment, activateAt);
+        _createPolicy(applicationNftId, activateAt);
+        if (requirePremiumPayment == true) {
+            _collectPremium(applicationNftId, activateAt);
+        }
     }
 
     function collectPremium(

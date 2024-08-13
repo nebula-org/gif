@@ -18,3 +18,5 @@ node_modules
 # custom
 deployment_state_*.json
 deploy.log
+
+soljson*.js
