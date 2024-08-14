@@ -16,5 +16,8 @@ node_modules
 /coverage.json
 
 # custom
-deployment_state_*.json
 deploy.log
+
+/deployments
+
+soljson*.js

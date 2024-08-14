@@ -13,8 +13,7 @@ import {IRegistry} from "gif-next/contracts/registry/IRegistry.sol";
 import {InstanceReader} from "gif-next/contracts/instance/InstanceReader.sol";
 import {MyProduct} from "./MyProduct.sol";
 import {INSTANCE} from "gif-next/contracts/type/ObjectType.sol";
-import {NftId} from "gif-next/contracts/type/NftId.sol";
-import {PRODUCT_OWNER_ROLE, DISTRIBUTION_OWNER_ROLE, POOL_OWNER_ROLE} from "gif-next/contracts/type/RoleId.sol";
+import {NftId, NftIdLib} from "gif-next/contracts/type/NftId.sol";
 import {ReferralLib} from "gif-next/contracts/type/Referral.sol";
 import {RiskId, RiskIdLib} from "gif-next/contracts/type/RiskId.sol";
 import {SecondsLib} from "gif-next/contracts/type/Seconds.sol";
@@ -62,43 +61,44 @@ contract Deployer  {
         // deploy token and components
         usdc = new UsdcMock();
 
-        IAuthorization distributionAuth = new BasicDistributionAuthorization(string.concat("MyDistribution", deploymentId));
-        distribution = MyDistribution(distributionAddress);
-        distribution.initialize(
-            registryAddress, 
-            instanceNftId, 
-            distributionAuth, 
-            address(this),
-            string.concat("MyDistribution", deploymentId), 
-            address(usdc));
-        distribution.register();
-
-        IAuthorization poolAuth = new BasicPoolAuthorization(string.concat("MyPool", deploymentId));
-        pool = MyPool(poolAddress);
-        pool.initialize(
-            registryAddress, 
-            instanceNftId, 
-            address(usdc),
-            poolAuth,
-            address(this),
-            string.concat("MyPool", deploymentId)
-            );
-        pool.register();
-        pool.approveTokenHandler(AmountLib.max());
-
         IAuthorization productAuth = new BasicProductAuthorization(string.concat("MyProduct", deploymentId));
         product = MyProduct(productAddress);
         product.initialize(
             registryAddress, 
             instanceNftId, 
-            address(this), 
             string.concat("MyProduct", deploymentId),
+            address(usdc),
             productAuth,
-            address(usdc), 
-            false,
-            address(pool), 
-            address(distribution));
-        product.register();
+            address(this)
+            );
+        instance.registerProduct(address(product));
+
+
+        IAuthorization distributionAuth = new BasicDistributionAuthorization(string.concat("MyDistribution", deploymentId));
+        distribution = MyDistribution(distributionAddress);
+        distribution.initialize(
+            registryAddress, 
+            getProductNftId(), 
+            distributionAuth, 
+            address(this),
+            string.concat("MyDistribution", deploymentId), 
+            address(usdc));
+        product.registerComponent(address(distribution));
+
+
+        IAuthorization poolAuth = new BasicPoolAuthorization(string.concat("MyPool", deploymentId));
+        pool = MyPool(poolAddress);
+        pool.initialize(
+            registryAddress, 
+            getProductNftId(), 
+            address(usdc),
+            poolAuth,
+            address(this),
+            string.concat("MyPool", deploymentId)
+            );
+        product.registerComponent(address(pool));
+        pool.approveTokenHandler(usdc, AmountLib.max());
+
 
 
         // create a bundle with a coverage of 10k for 30 days
@@ -215,7 +215,7 @@ contract Deployer  {
     }
 
     function underwritePolicy(NftId policyNftId) public {
-        product.collateralize(policyNftId, true, TimestampLib.blockTimestamp());
+        product.createPolicy(policyNftId, true, TimestampLib.blockTimestamp());
     }
 
     function getPolicyState(NftId policyNftId) public view returns (StateId) {
@@ -225,5 +225,6 @@ contract Deployer  {
     function getBundleBalance(NftId bundleNftId) public view returns (uint256) {
         return instanceReader.getBalanceAmount(bundleNftId).toInt();
     }
+
 
 }

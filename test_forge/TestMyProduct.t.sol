@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: APACHE-2.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {AmountLib} from "gif-next/contracts/type/Amount.sol";
-import {APPLIED, ACTIVE} from "gif-next/contracts/type/StateId.sol";
+import {APPLIED, COLLATERALIZED} from "gif-next/contracts/type/StateId.sol";
 import {Fee, FeeLib} from "gif-next/contracts/type/Fee.sol";
 import {IComponents} from "gif-next/contracts/instance/module/IComponents.sol";
 import {IPolicy} from "gif-next/contracts/instance/module/IPolicy.sol";
 import {NftId, NftIdLib} from "gif-next/contracts/type/NftId.sol";
-import {PRODUCT_OWNER_ROLE, DISTRIBUTION_OWNER_ROLE, POOL_OWNER_ROLE} from "gif-next/contracts/type/RoleId.sol";
 import {ReferralLib} from "gif-next/contracts/type/Referral.sol";
 import {RiskId, RiskIdLib} from "gif-next/contracts/type/RiskId.sol";
 import {Seconds, SecondsLib} from "gif-next/contracts/type/Seconds.sol";
@@ -87,10 +86,10 @@ contract TestInsuranceProduct is GifTest {
 
         // WHEN
         vm.startPrank(productOwner);
-        testProduct.collateralize(policyNftId, true, TimestampLib.blockTimestamp()); 
+        testProduct.createPolicy(policyNftId, true, TimestampLib.blockTimestamp()); 
 
         // THEN
-        assertTrue(instanceReader.getPolicyState(policyNftId) == ACTIVE(), "policy state not UNDERWRITTEN");
+        assertTrue(instanceReader.getPolicyState(policyNftId) == COLLATERALIZED(), "policy state not COLLATERALIZED");
 
         // TODO: fix this
         // IBundle.BundleInfo memory bundleInfo = instanceReader.getBundleInfo(bundleNftId);
@@ -114,24 +113,38 @@ contract TestInsuranceProduct is GifTest {
     }
 
     function _prepareTestInsuranceProduct() internal {
+        
+        vm.startPrank(productOwner);
+        testProduct = new MyProduct();
+        testProduct.initialize(
+            address(registry),
+            instanceNftId,
+            "MyProduct",
+            address(token),
+            new BasicProductAuthorization("MyProduct"),
+            productOwner
+        );
+        vm.stopPrank();
+
         vm.startPrank(instanceOwner);
-        instance.grantRole(PRODUCT_OWNER_ROLE(), productOwner);
-        instance.grantRole(DISTRIBUTION_OWNER_ROLE(), distributionOwner);
-        instance.grantRole(POOL_OWNER_ROLE(), poolOwner);
+        instance.registerProduct(address(testProduct));
+        testProductNftId = testProduct.getNftId();
         vm.stopPrank();
 
         vm.startPrank(distributionOwner);
         testDistribution = new MyDistribution();
         testDistribution.initialize(
             address(registry),
-            instanceNftId,
+            testProductNftId,
             new BasicDistributionAuthorization("MyDistribution"),
             distributionOwner,
             "MyDistribution",
             address(token)
         );
+        vm.stopPrank();
 
-        testDistribution.register();
+        vm.startPrank(productOwner);
+        testProduct.registerComponent(address(testDistribution));
         testDistributionNftId = testDistribution.getNftId();
         vm.stopPrank();
 
@@ -139,47 +152,22 @@ contract TestInsuranceProduct is GifTest {
         testPool = new MyPool();
         testPool.initialize(
             address(registry),
-            instanceNftId,
+            testProductNftId,
             address(token),
             new BasicPoolAuthorization("MyPool"),
             poolOwner,
             "MyPool"
         );
-        testPool.register();
-        testPoolNftId = testPool.getNftId();
-        testPool.approveTokenHandler(AmountLib.max());
         vm.stopPrank();
 
         vm.startPrank(productOwner);
-        testProduct = new MyProduct();
-        testProduct.initialize(
-            address(registry),
-            instanceNftId,
-            productOwner,
-            "MyProduct",
-            new BasicProductAuthorization("MyProduct"),
-            address(token),
-            false,
-            address(testPool), 
-            address(testDistribution)
-        );
-        
-        testProduct.register();
-        testProductNftId = testProduct.getNftId();
+        testProduct.registerComponent(address(testPool));
+        testPoolNftId = testPool.getNftId();
         vm.stopPrank();
 
-        // TODO: fix this
-        // vm.startPrank(distributionOwner);
-        // Fee memory distributionFee = FeeLib.toFee(UFixedLib.zero(), 10);
-        // Fee memory minDistributionOwnerFee = FeeLib.toFee(UFixedLib.zero(), 10);
-        // testDistribution.setFees(minDistributionOwnerFee, distributionFee);
-        // vm.stopPrank();
-
-        // TODO: fix this
-        // vm.startPrank(poolOwner);
-        // Fee memory poolFee = FeeLib.toFee(UFixedLib.zero(), 10);
-        // pool.setFees(poolFee, FeeLib.zeroFee(), FeeLib.zeroFee());
-        // vm.stopPrank();
+        vm.startPrank(poolOwner);
+        testPool.approveTokenHandler(token, AmountLib.max());
+        vm.stopPrank();
 
         vm.startPrank(registryOwner);
         token.transfer(investor, 10000);

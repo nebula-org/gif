@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: APACHE-2.0
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import {console} from "forge-std/src/Test.sol";
 
-import {ACTIVE, APPLIED} from "gif-next/contracts/type/StateId.sol";
+import {COLLATERALIZED, APPLIED} from "gif-next/contracts/type/StateId.sol";
 import {Deployer} from "../contracts/Deployer.sol";
 import {GifTest} from "gif-next/test/base/GifTest.sol";
 import {NftId, NftIdLib} from "gif-next/contracts/type/NftId.sol";
@@ -89,7 +89,7 @@ contract TestDeployer is GifTest {
         usdc.approve(deployer.getProductTokenHandler(), 100 * 1000000);
         deployer.underwritePolicy(policyNftId);
 
-        assertTrue(deployer.getPolicyState(policyNftId) == ACTIVE(), "state not ACTIVE");
+        assertTrue(deployer.getPolicyState(policyNftId) == COLLATERALIZED(), "state not ACTIVE");
     }
 
 }

@@ -10,12 +10,12 @@ import {Timestamp} from "gif-next/contracts/type/Timestamp.sol";
 import {UFixed} from "gif-next/contracts/type/UFixed.sol";
 
 contract MyDistribution is BasicDistribution {
-
+    
     function initialize(
         address registry,
-        NftId instanceNftId,
+        NftId productNftId,
         IAuthorization authorization,
-        address initialOwner,
+        address initialOwner, 
         string memory name,
         address token
     )
@@ -25,7 +25,7 @@ contract MyDistribution is BasicDistribution {
     {
         _initializeBasicDistribution(
             registry,
-            instanceNftId,
+            productNftId,
             authorization,
             initialOwner,
             name,
