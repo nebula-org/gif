@@ -3,12 +3,12 @@ pragma solidity ^0.8.20;
 
 import {AmountLib} from "gif-next/contracts/type/Amount.sol";
 import {BasicPool} from "gif-next/contracts/pool/BasicPool.sol";
-import {Fee} from "gif-next/contracts/type/Fee.sol";
+import {Fee, FeeLib} from "gif-next/contracts/type/Fee.sol";
 import {IAuthorization} from "gif-next/contracts/authorization/IAuthorization.sol";
 import {IComponents} from "gif-next/contracts/instance/module/IComponents.sol";
 import {NftId} from "gif-next/contracts/type/NftId.sol";
 import {Seconds} from "gif-next/contracts/type/Timestamp.sol";
-import {UFixed} from "gif-next/contracts/type/UFixed.sol";
+import {UFixed, UFixedLib} from "gif-next/contracts/type/UFixed.sol";
 
 contract MyPool is BasicPool {
 
@@ -16,7 +16,6 @@ contract MyPool is BasicPool {
         address registry,
         NftId productNftId,
         address token,
-        IComponents.PoolInfo memory poolInfo,
         IAuthorization authorization,
         address initialOwner,
         string memory name
@@ -30,7 +29,15 @@ contract MyPool is BasicPool {
             productNftId,
             name,
             token,
-            poolInfo,
+            IComponents.PoolInfo({
+                maxBalanceAmount: AmountLib.max(),
+                isInterceptingBundleTransfers: false,
+                isProcessingConfirmedClaims: false,
+                isExternallyManaged: false,
+                isVerifyingApplications: false,
+                collateralizationLevel: UFixedLib.one(),
+                retentionLevel: UFixedLib.one()
+            }),
             authorization,
             initialOwner);
     }

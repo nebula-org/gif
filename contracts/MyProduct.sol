@@ -4,10 +4,10 @@ pragma solidity ^0.8.20;
 import {Amount, AmountLib} from "gif-next/contracts/type/Amount.sol";
 import {BasicProduct} from "gif-next/contracts/product/BasicProduct.sol";
 import {ClaimId} from "gif-next/contracts/type/ClaimId.sol";
-import {Fee} from "gif-next/contracts/type/Fee.sol";
+import {Fee, FeeLib} from "gif-next/contracts/type/Fee.sol";
 import {IAuthorization} from "gif-next/contracts/authorization/IAuthorization.sol";
 import {IComponents} from "gif-next/contracts/instance/module/IComponents.sol";
-import {NftId} from "gif-next/contracts/type/NftId.sol";
+import {NftId, NftIdLib} from "gif-next/contracts/type/NftId.sol";
 import {PayoutId} from "gif-next/contracts/type/PayoutId.sol";
 import {ReferralId} from "gif-next/contracts/type/Referral.sol";
 import {RequestId} from "gif-next/contracts/type/RequestId.sol";
@@ -27,7 +27,6 @@ contract MyProduct is BasicProduct {
         NftId instanceNftid,
         string memory name,
         address token,
-        IComponents.ProductInfo memory productInfo,
         IAuthorization authorization,
         address initialOwner
     )
@@ -39,7 +38,23 @@ contract MyProduct is BasicProduct {
             instanceNftid,
             name,
             token,
-            productInfo,
+            IComponents.ProductInfo({
+                isProcessingFundedClaims: false,
+                isInterceptingPolicyTransfers: false,
+                hasDistribution: true,
+                expectedNumberOfOracles: 0,
+                numberOfOracles: 0,
+                poolNftId: NftIdLib.zero(),
+                distributionNftId: NftIdLib.zero(),
+                oracleNftId: new NftId[](0),
+                productFee: FeeLib.zero(),
+                processingFee: FeeLib.zero(),
+                distributionFee: FeeLib.zero(),
+                minDistributionOwnerFee: FeeLib.zero(),
+                poolFee: FeeLib.zero(),
+                stakingFee: FeeLib.zero(),
+                performanceFee: FeeLib.zero()
+            }),
             authorization,
             initialOwner); 
     }

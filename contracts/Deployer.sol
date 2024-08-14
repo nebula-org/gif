@@ -68,7 +68,6 @@ contract Deployer  {
             instanceNftId, 
             string.concat("MyProduct", deploymentId),
             address(usdc),
-            _getSimpleProductInfo(),
             productAuth,
             address(this)
             );
@@ -93,7 +92,6 @@ contract Deployer  {
             registryAddress, 
             getProductNftId(), 
             address(usdc),
-            _getDefaultSimplePoolInfo(),
             poolAuth,
             address(this),
             string.concat("MyPool", deploymentId)
@@ -226,41 +224,6 @@ contract Deployer  {
 
     function getBundleBalance(NftId bundleNftId) public view returns (uint256) {
         return instanceReader.getBalanceAmount(bundleNftId).toInt();
-    }
-
-    function _getSimpleProductInfo()
-        internal
-        view
-        returns (IComponents.ProductInfo memory productInfo)
-    {
-        return IComponents.ProductInfo({
-            isProcessingFundedClaims: false,
-            isInterceptingPolicyTransfers: false,
-            hasDistribution: true,
-            expectedNumberOfOracles: 1,
-            numberOfOracles: 0,
-            poolNftId: NftIdLib.zero(),
-            distributionNftId: NftIdLib.zero(),
-            oracleNftId: new NftId[](1),
-            productFee: FeeLib.zero(),
-            processingFee: FeeLib.zero(),
-            distributionFee: FeeLib.zero(),
-            minDistributionOwnerFee: FeeLib.zero(),
-            poolFee: FeeLib.zero(),
-            stakingFee: FeeLib.zero(),
-            performanceFee: FeeLib.zero()
-        });
-    }
-
-    function _getDefaultSimplePoolInfo() internal pure returns (IComponents.PoolInfo memory) {
-        return IComponents.PoolInfo({
-            maxBalanceAmount: AmountLib.max(),
-            isInterceptingBundleTransfers: false,
-            isProcessingConfirmedClaims: false,
-            isExternallyManaged: false,
-            isVerifyingApplications: false,
-            collateralizationLevel: UFixedLib.one(),
-            retentionLevel: UFixedLib.one()});
     }
 
 

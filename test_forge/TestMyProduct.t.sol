@@ -121,7 +121,6 @@ contract TestInsuranceProduct is GifTest {
             instanceNftId,
             "MyProduct",
             address(token),
-            _getSimpleProductInfo(),
             new BasicProductAuthorization("MyProduct"),
             productOwner
         );
@@ -155,7 +154,6 @@ contract TestInsuranceProduct is GifTest {
             address(registry),
             testProductNftId,
             address(token),
-            _getDefaultSimplePoolInfo(),
             new BasicPoolAuthorization("MyPool"),
             poolOwner,
             "MyPool"
