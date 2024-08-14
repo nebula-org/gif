@@ -1,10 +1,11 @@
-import { AddressLike, Signer, encodeBytes32String } from "ethers";
-import { BasicDistribution, Distribution, IInstance, IInstance__factory, IInstanceService__factory, Pool, Product } from "../typechain-types";
+import { AddressLike, Signer, encodeBytes32String, resolveAddress } from "ethers";
+import { BasicDistribution, Distribution, IInstance, IInstance__factory, IInstanceService__factory, MyDistribution, MyPool, MyProduct, MyProduct__factory, Pool, Product } from "../typechain-types";
 import { getNamedAccounts } from "./libs/accounts";
 import { deployContract } from "./libs/deployment";
 import { DISTRIBUTION_OWNER_ROLE, POOL_OWNER_ROLE, PRODUCT_OWNER_ROLE } from "./libs/gif_constants";
 import { executeTx, getFieldFromLogs } from "./libs/transaction";
 import { logger } from "./logger";
+import { exceptions } from "winston";
 
 async function main() {
     logger.info("deploying components ...");
@@ -46,7 +47,7 @@ async function main() {
     const { product, productNftId } = await deployAndRegisterProduct(
         instance,
         productOwner,
-        instanceNftId!,
+        instanceNftId,
         usdcMockAddress,
         registryAddress!,
         nftIdLibAddress!,
@@ -133,14 +134,7 @@ async function deployAndRegisterDistribution(
     const { address: distAddress, contract: dist } = await deployContract(
         "MyDistribution",
         distributionOwner,
-        [
-            registryAddress,
-            productNftId,
-            authAddr,
-            distributionOwner,
-            distName,
-            usdcMockAddress
-        ],
+        [ ],
         {
             libraries: {
                 AmountLib: amountLibAddress,
@@ -149,7 +143,16 @@ async function deployAndRegisterDistribution(
             }
         });
 
-    const distribution = dist as Distribution;
+    const distribution = dist as MyDistribution;
+
+    await executeTx(() => distribution.initialize(
+        registryAddress,
+        productNftId,
+        authAddr,
+        distributionOwner,
+        distName,
+        usdcMockAddress
+    ), null, [distribution.interface]);
 
     console.log(`Registering distribution ...`);
     const rcpt = await executeTx(() => product.registerComponent(distAddress), null, [distribution.interface]);
@@ -195,14 +198,7 @@ async function deployAndRegisterPool(
     const { address: poolAddress, contract: poolContract } = await deployContract(
         "MyPool",
         poolOwner,
-        [
-            registryAddress,
-            productNftId,
-            usdcMockAddress,
-            authAddr,
-            poolOwner,
-            poolName
-        ],
+        [],
         {
             libraries: {
                 NftIdLib: nftIdLibAddress,
@@ -213,7 +209,16 @@ async function deployAndRegisterPool(
             }
         });
 
-    var pool = poolContract as Pool;
+    var pool = poolContract as MyPool;
+
+    await executeTx(() => pool.initialize(
+        registryAddress,
+        productNftId,
+        usdcMockAddress,
+        authAddr,
+        poolOwner,
+        poolName
+    ), null, [pool.interface]);
 
     console.log(`Registering pool at ${poolAddress} ...`);
     const rcpt = await executeTx(() => product.registerComponent(poolAddress), null, [product.interface]);
@@ -263,14 +268,7 @@ async function deployAndRegisterProduct(
     const { address: productAddress, contract: productContract } = await deployContract(
         "MyProduct",
         productOwner,
-        [
-            registryAddress,
-            instanceNftId,
-            productName,
-            authAddr,
-            usdcMockAddress,
-            productOwner
-        ],
+        [],
         {
             libraries: {
                 AmountLib: amountLibAddress,
@@ -281,12 +279,21 @@ async function deployAndRegisterProduct(
             }
         });
 
-    const product = productContract as Product;
+    const product = MyProduct__factory.connect(await resolveAddress(productAddress), productOwner);
+
+    await executeTx(() => product.initialize(
+        registryAddress,
+        instanceNftId,
+        productName,
+        authAddr,
+        usdcMockAddress,
+        productOwner
+    ), "init product", [product.interface]);
 
     console.log(`Registering product at ${productAddress} ...`);
     const rcpt = await executeTx(
         async () => await instance.registerProduct(productAddress), 
-        null, 
+        "register product", 
         [IInstance__factory.createInterface()]);
     const productNftId = await product.getNftId();
     console.log(`Product ${productName} registered at ${productAddress} with ${productNftId}`);

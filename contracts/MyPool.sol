@@ -11,7 +11,7 @@ import {Seconds} from "gif-next/contracts/type/Timestamp.sol";
 import {UFixed, UFixedLib} from "gif-next/contracts/type/UFixed.sol";
 
 contract MyPool is BasicPool {
-
+    
     function initialize(
         address registry,
         NftId productNftId,

@@ -22,24 +22,6 @@ contract MyProduct is BasicProduct {
 
     error ErrorSimpleProductRevertedWhileProcessingResponse(RequestId requestId);
 
-    constructor(
-        address registry,
-        NftId instanceNftid,
-        string memory name,
-        address token,
-        IAuthorization authorization,
-        address initialOwner
-    ) {
-        initialize(
-            registry,
-            instanceNftid,
-            name,
-            token,
-            authorization,
-            initialOwner
-        );
-    }
-
     function initialize(
         address registry,
         NftId instanceNftid,
