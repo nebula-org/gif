@@ -26,7 +26,6 @@ contract MyProduct is BasicProduct {
         address registry,
         NftId instanceNftid,
         string memory name,
-        address token,
         IAuthorization authorization,
         address initialOwner
     )
@@ -37,7 +36,6 @@ contract MyProduct is BasicProduct {
             registry,
             instanceNftid,
             name,
-            token,
             IComponents.ProductInfo({
                 isProcessingFundedClaims: false,
                 isInterceptingPolicyTransfers: false,
@@ -46,7 +44,9 @@ contract MyProduct is BasicProduct {
                 numberOfOracles: 0,
                 poolNftId: NftIdLib.zero(),
                 distributionNftId: NftIdLib.zero(),
-                oracleNftId: new NftId[](0),
+                oracleNftId: new NftId[](0)
+            }),
+            IComponents.FeeInfo({
                 productFee: FeeLib.zero(),
                 processingFee: FeeLib.zero(),
                 distributionFee: FeeLib.zero(),
@@ -60,11 +60,11 @@ contract MyProduct is BasicProduct {
     }
 
     function createRisk(
-        RiskId id,
+        string memory id,
         bytes memory data
-    ) public {
-        _createRisk(
-            id,
+    ) public returns (RiskId) {
+        return _createRisk(
+            bytes32(abi.encodePacked(id)),
             data
         );
     }

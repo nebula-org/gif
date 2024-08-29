@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.20;
 
-import {AmountLib} from "gif-next/contracts/type/Amount.sol";
+import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+
+import {Amount, AmountLib} from "gif-next/contracts/type/Amount.sol";
 import {BasicPool} from "gif-next/contracts/pool/BasicPool.sol";
 import {Fee, FeeLib} from "gif-next/contracts/type/Fee.sol";
 import {IAuthorization} from "gif-next/contracts/authorization/IAuthorization.sol";
@@ -15,7 +17,6 @@ contract MyPool is BasicPool {
     function initialize(
         address registry,
         NftId productNftId,
-        address token,
         IAuthorization authorization,
         address initialOwner,
         string memory name
@@ -28,7 +29,6 @@ contract MyPool is BasicPool {
             registry,
             productNftId,
             name,
-            token,
             IComponents.PoolInfo({
                 maxBalanceAmount: AmountLib.max(),
                 isInterceptingBundleTransfers: false,
@@ -61,5 +61,14 @@ contract MyPool is BasicPool {
         );
         _stake(bundleNftId, AmountLib.toAmount(initialAmount));
     }
+
+    function approveTokenHandler(IERC20Metadata token, Amount amount) 
+        external 
+        restricted() 
+        onlyOwner() 
+    { 
+        _approveTokenHandler(token, amount); 
+    }
+
 
 }

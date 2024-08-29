@@ -67,11 +67,10 @@ contract Deployer  {
             registryAddress, 
             instanceNftId, 
             string.concat("MyProduct", deploymentId),
-            address(usdc),
             productAuth,
             address(this)
             );
-        instance.registerProduct(address(product));
+        instance.registerProduct(address(product), address(usdc));
 
 
         IAuthorization distributionAuth = new BasicDistributionAuthorization(string.concat("MyDistribution", deploymentId));
@@ -81,8 +80,7 @@ contract Deployer  {
             getProductNftId(), 
             distributionAuth, 
             address(this),
-            string.concat("MyDistribution", deploymentId), 
-            address(usdc));
+            string.concat("MyDistribution", deploymentId));
         product.registerComponent(address(distribution));
 
 
@@ -91,7 +89,6 @@ contract Deployer  {
         pool.initialize(
             registryAddress, 
             getProductNftId(), 
-            address(usdc),
             poolAuth,
             address(this),
             string.concat("MyPool", deploymentId)
@@ -112,9 +109,8 @@ contract Deployer  {
         );
 
         // create risk
-        riskId = RiskIdLib.toRiskId("1234");
         bytes memory data = "riskdata";
-        product.createRisk(riskId, data);
+        riskId = product.createRisk("1234", data);
 
         // move ownership of instance, component and bundle nfts to instance owner
         chainNft.safeTransferFrom(address(this), theAllmighty, instanceNftId.toInt());
@@ -183,8 +179,7 @@ contract Deployer  {
     }
 
     function createRisk(string memory riskIdStr, bytes memory data) public returns (RiskId riskId) {
-        RiskId riskId = RiskIdLib.toRiskId(riskIdStr);
-        product.createRisk(riskId, data);
+        return product.createRisk(riskIdStr, data);
     }
 
     function sendUsdcTokens(address recipient) public {
