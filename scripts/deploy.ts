@@ -28,7 +28,7 @@ async function main() {
     
     const instanceService = IInstanceService__factory.connect(instanceServiceAddress!, productOwner);
     const instanceCreateTx = await executeTx(
-        async() => await instanceService.createInstance(),
+        async() => await instanceService.createInstance(true),
         "createinstance tx",
         [instanceService.interface]);
 
@@ -150,8 +150,7 @@ async function deployAndRegisterDistribution(
         productNftId,
         authAddr,
         distributionOwner,
-        distName,
-        usdcMockAddress
+        distName
     ), null, [distribution.interface]);
 
     console.log(`Registering distribution ...`);
@@ -214,7 +213,6 @@ async function deployAndRegisterPool(
     await executeTx(() => pool.initialize(
         registryAddress,
         productNftId,
-        usdcMockAddress,
         authAddr,
         poolOwner,
         poolName
@@ -286,13 +284,12 @@ async function deployAndRegisterProduct(
         instanceNftId,
         productName,
         authAddr,
-        usdcMockAddress,
         productOwner
     ), "init product", [product.interface]);
 
     console.log(`Registering product at ${productAddress} ...`);
     const rcpt = await executeTx(
-        async () => await instance.registerProduct(productAddress), 
+        async () => await instance.registerProduct(productAddress, usdcMockAddress), 
         "register product", 
         [IInstance__factory.createInterface()]);
     const productNftId = await product.getNftId();

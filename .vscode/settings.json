@@ -19,6 +19,6 @@
         "titleBar.inactiveForeground": "#e7e7e799"
     },
     "peacock.remoteColor": "#559485",
-    "solidity.defaultCompiler": "localFile",
-    "solidity.compileUsingLocalVersion": "/workspaces/gif-next/soljson-v0.8.26+commit.8a97fa7a.js",
+    "solidity.defaultCompiler": "localNodeModule",
+    "solidity.compileUsingLocalVersion": "/workspaces/gif-next-sandbox/soljson-v0.8.26+commit.8a97fa7a.js",
 }

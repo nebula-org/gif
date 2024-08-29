@@ -33,8 +33,10 @@ The deployer contract requires the following parameters:
 
 During the deployment the contract will 
 - create a new instance on the GIF framework
-- deploy a mock USDC token
-- initialize the components `MyDistribution`, `MyPool` and `MyProduct` and register them with the new instance
+- deploy a mock USDC token (and register it with the tokenregistry if not already done and instance has not disabled token registry)
+- deploy the components `MyDistribution`, `MyPool` and `MyProduct`
+- register `MyProduct` with the instance
+- register the components on the product
 - create a new bundle in the pool with a coverage amount of 10000 USDC
 - a new riskId for creating new policies
 - transfer the ownership of the instance, components and bundle to the caller of the deployment

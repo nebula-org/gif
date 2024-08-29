@@ -16,8 +16,7 @@ contract MyDistribution is BasicDistribution {
         NftId productNftId,
         IAuthorization authorization,
         address initialOwner, 
-        string memory name,
-        address token
+        string memory name
     )
         public
         virtual
@@ -28,7 +27,6 @@ contract MyDistribution is BasicDistribution {
             productNftId,
             authorization,
             initialOwner,
-            name,
-            token);
+            name);
     }
 }

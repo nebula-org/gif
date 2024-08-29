@@ -8,7 +8,7 @@ import {IComponents} from "gif-next/contracts/instance/module/IComponents.sol";
 import {IPolicy} from "gif-next/contracts/instance/module/IPolicy.sol";
 import {NftId, NftIdLib} from "gif-next/contracts/type/NftId.sol";
 import {ReferralLib} from "gif-next/contracts/type/Referral.sol";
-import {RiskId, RiskIdLib} from "gif-next/contracts/type/RiskId.sol";
+import {RiskId} from "gif-next/contracts/type/RiskId.sol";
 import {Seconds, SecondsLib} from "gif-next/contracts/type/Seconds.sol";
 import {GifTest} from "gif-next/test/base/GifTest.sol";
 import {TimestampLib} from "gif-next/contracts/type/Timestamp.sol";
@@ -23,7 +23,7 @@ import {MyPool} from "../contracts/MyPool.sol";
 import {MyProduct} from "../contracts/MyProduct.sol";
 
 
-
+// solhint-disable func-name-mixedcase
 contract TestInsuranceProduct is GifTest {
     using NftIdLib for NftId;
 
@@ -52,14 +52,7 @@ contract TestInsuranceProduct is GifTest {
         _prepareTestInsuranceProduct();  
 
         vm.startPrank(productOwner);
-
-        // TODO: fix this
-        // Fee memory productFee = FeeLib.toFee(UFixedLib.zero(), 10);
-        // product.setFees(productFee, FeeLib.zeroFee());
-
-        RiskId riskId = RiskIdLib.toRiskId("42x4711");
-        bytes memory data = "bla di blubb";
-        testProduct.createRisk(riskId, data);
+        RiskId riskId = testProduct.createRisk("Risk_42", "");
 
         vm.stopPrank();
 
@@ -91,22 +84,17 @@ contract TestInsuranceProduct is GifTest {
         // THEN
         assertTrue(instanceReader.getPolicyState(policyNftId) == COLLATERALIZED(), "policy state not COLLATERALIZED");
 
-        // TODO: fix this
-        // IBundle.BundleInfo memory bundleInfo = instanceReader.getBundleInfo(bundleNftId);
-        // assertEq(bundleInfo.lockedAmount.toInt(), 1000, "lockedAmount not 1000");
-        // assertEq(bundleInfo.feeAmount.toInt(), 10, "feeAmount not 10");
-        // assertEq(bundleInfo.capitalAmount.toInt(), 10000 + 100 - 10, "capitalAmount not 1100");
-        
+        assertEq(instanceReader.getLockedAmount(bundleNftId).toInt(), 1000, "lockedAmount not 1000");
+        assertEq(instanceReader.getFeeAmount(bundleNftId).toInt(), 10, "feeAmount not 10");
+        assertEq(instanceReader.getBalanceAmount(bundleNftId).toInt(), 10000 + 100 + 10, "balance not 1100");
+
+        assertEq(token.balanceOf(address(customer)), 890, "customer balance not 880");
+        assertEq(token.balanceOf(testPool.getWallet()), 10110, "pool balance not 10100");
+
         IPolicy.PolicyInfo memory policyInfo = instanceReader.getPolicyInfo(policyNftId);
         assertTrue(policyInfo.activatedAt.gtz(), "activatedAt not set");
         assertTrue(policyInfo.expiredAt.gtz(), "expiredAt not set");
         assertTrue(policyInfo.expiredAt.toInt() == policyInfo.activatedAt.addSeconds(sec30).toInt(), "expiredAt not activatedAt + 30");
-
-        // TODO: fix this
-        // assertEq(token.balanceOf(testPproduct.getWallet()), 10, "product balance not 10");
-        // assertEq(token.balanceOf(testDistribution.getWallet()), 10, "distibution balance not 10");
-        // assertEq(token.balanceOf(address(customer)), 880, "customer balance not 880");
-        // assertEq(token.balanceOf(testPool.getWallet()), 10100, "pool balance not 10100");
 
         assertEq(instanceBundleSet.activePolicies(bundleNftId), 1, "expected one active policy");
         assertTrue(instanceBundleSet.getActivePolicy(bundleNftId, 0).eq(policyNftId), "active policy nft id in bundle manager not equal to policy nft id");
@@ -120,14 +108,13 @@ contract TestInsuranceProduct is GifTest {
             address(registry),
             instanceNftId,
             "MyProduct",
-            address(token),
             new BasicProductAuthorization("MyProduct"),
             productOwner
         );
         vm.stopPrank();
 
         vm.startPrank(instanceOwner);
-        instance.registerProduct(address(testProduct));
+        instance.registerProduct(address(testProduct), address(token));
         testProductNftId = testProduct.getNftId();
         vm.stopPrank();
 
@@ -138,8 +125,7 @@ contract TestInsuranceProduct is GifTest {
             testProductNftId,
             new BasicDistributionAuthorization("MyDistribution"),
             distributionOwner,
-            "MyDistribution",
-            address(token)
+            "MyDistribution"
         );
         vm.stopPrank();
 
@@ -153,7 +139,6 @@ contract TestInsuranceProduct is GifTest {
         testPool.initialize(
             address(registry),
             testProductNftId,
-            address(token),
             new BasicPoolAuthorization("MyPool"),
             poolOwner,
             "MyPool"
