@@ -64,7 +64,6 @@ contract MyPool is BasicPool {
 
     function approveTokenHandler(IERC20Metadata token, Amount amount) 
         external 
-        restricted() 
         onlyOwner() 
     { 
         _approveTokenHandler(token, amount); 

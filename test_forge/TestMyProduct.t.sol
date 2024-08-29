@@ -57,9 +57,8 @@ contract TestInsuranceProduct is GifTest {
         // Fee memory productFee = FeeLib.toFee(UFixedLib.zero(), 10);
         // product.setFees(productFee, FeeLib.zeroFee());
 
-        RiskId riskId = RiskIdLib.toRiskId("42x4711");
         bytes memory data = "bla di blubb";
-        testProduct.createRisk(riskId, data);
+        RiskId riskId = testProduct.createRisk("42x4711", data);
 
         vm.stopPrank();
 
@@ -120,14 +119,13 @@ contract TestInsuranceProduct is GifTest {
             address(registry),
             instanceNftId,
             "MyProduct",
-            address(token),
             new BasicProductAuthorization("MyProduct"),
             productOwner
         );
         vm.stopPrank();
 
         vm.startPrank(instanceOwner);
-        instance.registerProduct(address(testProduct));
+        instance.registerProduct(address(testProduct), address(token));
         testProductNftId = testProduct.getNftId();
         vm.stopPrank();
 
@@ -138,8 +136,7 @@ contract TestInsuranceProduct is GifTest {
             testProductNftId,
             new BasicDistributionAuthorization("MyDistribution"),
             distributionOwner,
-            "MyDistribution",
-            address(token)
+            "MyDistribution"
         );
         vm.stopPrank();
 
@@ -153,7 +150,6 @@ contract TestInsuranceProduct is GifTest {
         testPool.initialize(
             address(registry),
             testProductNftId,
-            address(token),
             new BasicPoolAuthorization("MyPool"),
             poolOwner,
             "MyPool"
