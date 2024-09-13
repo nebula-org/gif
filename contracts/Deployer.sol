@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.20;
 
-import {AmountLib} from "gif-next/contracts/type/Amount.sol";
+import {Amount, AmountLib} from "gif-next/contracts/type/Amount.sol";
 import {MyDistribution} from "./MyDistribution.sol";
 import {MyPool} from "./MyPool.sol";
 import {ChainNft} from "gif-next/contracts/registry/ChainNft.sol";
@@ -209,8 +209,8 @@ contract Deployer  {
         );
     }
 
-    function underwritePolicy(NftId policyNftId) public {
-        product.createPolicy(policyNftId, true, TimestampLib.blockTimestamp());
+    function underwritePolicy(NftId policyNftId, Amount maxPaymentAmount) public {
+        product.createPolicy(policyNftId, true, TimestampLib.current(), maxPaymentAmount);
     }
 
     function getPolicyState(NftId policyNftId) public view returns (StateId) {

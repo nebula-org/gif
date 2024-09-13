@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 import {console} from "forge-std/src/Test.sol";
 
+import {AmountLib} from "gif-next/contracts/type/Amount.sol";
 import {COLLATERALIZED, APPLIED} from "gif-next/contracts/type/StateId.sol";
 import {Deployer} from "../contracts/Deployer.sol";
 import {GifTest} from "gif-next/test/base/GifTest.sol";
@@ -87,7 +88,7 @@ contract TestDeployer is GifTest {
 
         UsdcMock usdc = UsdcMock(deployer.getUsdc());
         usdc.approve(deployer.getProductTokenHandler(), 100 * 1000000);
-        deployer.underwritePolicy(policyNftId);
+        deployer.underwritePolicy(policyNftId, AmountLib.max());
 
         assertTrue(deployer.getPolicyState(policyNftId) == COLLATERALIZED(), "state not ACTIVE");
     }
