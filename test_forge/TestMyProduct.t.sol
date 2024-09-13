@@ -79,7 +79,7 @@ contract TestInsuranceProduct is GifTest {
 
         // WHEN
         vm.startPrank(productOwner);
-        testProduct.createPolicy(policyNftId, true, TimestampLib.blockTimestamp()); 
+        testProduct.createPolicy(policyNftId, true, TimestampLib.current(), AmountLib.max()); 
 
         // THEN
         assertTrue(instanceReader.getPolicyState(policyNftId) == COLLATERALIZED(), "policy state not COLLATERALIZED");

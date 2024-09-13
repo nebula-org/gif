@@ -79,16 +79,6 @@ contract MyProduct is BasicProduct {
         );
     }
 
-    function updateRiskState(
-        RiskId id,
-        StateId state
-    ) public {
-        _updateRiskState(
-            id,
-            state
-        );
-    }
-
     function createApplication(
         address applicationOwner,
         RiskId riskId,
@@ -122,9 +112,10 @@ contract MyProduct is BasicProduct {
     function createPolicy(
         NftId applicationNftId,
         bool requirePremiumPayment,
-        Timestamp activateAt
+        Timestamp activateAt,
+        Amount maxPremiumAmount
     ) public {
-        _createPolicy(applicationNftId, activateAt);
+        _createPolicy(applicationNftId, activateAt, maxPremiumAmount);
         if (requirePremiumPayment == true) {
             _collectPremium(applicationNftId, activateAt);
         }
@@ -175,11 +166,11 @@ contract MyProduct is BasicProduct {
         _declineClaim(policyNftId, claimId, processData);
     }
 
-    function closeClaim(
+    function cancelConfirmedClaim(
         NftId policyNftId,
         ClaimId claimId
     ) public {
-        _closeClaim(policyNftId, claimId);
+        _cancelConfirmedClaim(policyNftId, claimId);
     }
 
     function createPayout(
