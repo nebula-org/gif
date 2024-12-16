@@ -1,5 +1,6 @@
 node_modules
 .env
+.github
 
 # Hardhat files
 /cache
@@ -21,3 +22,5 @@ deploy.log
 /deployments
 
 soljson*.js
+
+.vscode
