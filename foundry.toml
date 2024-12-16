@@ -3,7 +3,7 @@ src = 'contracts'
 out = 'artifacts_forge'
 libs = ['node_modules', 'lib']
 test = 'test_forge'
-cache_path  = 'cache_forge'
+cache_path = 'cache_forge'
 solc_version = "0.8.26"
 
 ffi = true
@@ -16,4 +16,3 @@ include_storage = true
 include_push_bytes = true
 max_fuzz_dictionary_addresses = 15728640
 max_fuzz_dictionary_values = 6553600
-

@@ -1,0 +1,59 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
+import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+// Implementation contract for the proxy
+import "./Inquiry.sol";
+
+contract InquiryProxy is Ownable {
+    ProxyAdmin public proxyAdmin;
+    TransparentUpgradeableProxy public proxy;
+    InquiryRegistry public implementation;
+
+    // Event to log the address of the deployed contracts
+    event ContractsDeployed(
+        address implementation,
+        address proxy,
+        address proxyAdmin
+    );
+
+    constructor() Ownable(msg.sender) {
+        // Deploy the implementation contract
+        implementation = new InquiryRegistry();
+
+        // Deploy the ProxyAdmin
+        proxyAdmin = new ProxyAdmin(msg.sender);
+
+        // Deploy the proxy contract and initialize it
+        proxy = new TransparentUpgradeableProxy(
+            address(implementation),
+            address(proxyAdmin),
+            abi.encodeWithSignature("initialize()") // Call the initialize function
+        );
+
+        // Transfer ownership of the ProxyAdmin to the contract deployer
+        proxyAdmin.transferOwnership(msg.sender);
+
+        // Emit event for the deployed addresses
+        emit ContractsDeployed(
+            address(implementation),
+            address(proxy),
+            address(proxyAdmin)
+        );
+    }
+
+    // Function to upgrade the implementation if needed
+    function upgradeImplementation(
+        address newImplementation
+    ) external onlyOwner {
+        proxyAdmin.upgradeAndCall(proxy, newImplementation, "");
+    }
+
+    // Function to get the current implementation address
+    function getImplementation() external view returns (address) {
+        return address(implementation);
+    }
+}
